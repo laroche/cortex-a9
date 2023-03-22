@@ -29,7 +29,7 @@ LFLAGS += -Wl,--gc-sections
 #LFLAGS += -flto
 
 QEMU = qemu-system-arm
-QEMU_OPTS = -M vexpress-a9 -serial mon:stdio
+QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
 AS_FILES := $(wildcard $(SRCDIR)/*.S)

@@ -4,4 +4,13 @@ so far I got keyboard (pl050) , CLCD display (pl111) , timer (sp804) , uart (pl0
 the code is a mess at this moment.. this is just a proof of concept
 if I have time I'm planning to clean up the code and seperate things like (Makefile, drivers, syscall, startup, interrupt ..etc)
 
+## TODO
+
+- optionally initialize stack with 0xdeadbeef
+- Why is no "\n" needed at the end of printf() for period timer handler?
+- Merge Cortex-A15 support?
+- Reduce syscall.c to minimal needed functions.
+- Update to newest uGUI release.
+- Add more SMP support.
+
 tags: qemu cortex-a9 vexpress-a9 arm gic pl050 pl111 sp804 pl011 kmi clcd timer uart irq

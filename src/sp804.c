@@ -1,7 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <time.h>
 #include "interrupt.h"
 #include "sp804.h"
+#include "pl031.h"
 
 /* Flags for the timer control registers  */
 #define SP804_TIMER_ENABLE       (1U << 7)
@@ -28,15 +30,18 @@ typedef volatile struct {
 
 #define TIMER_BASE 0x10011000U
 
-/* static volatile timer804_t * const tregs = (timer804_t *) TIMER_BASE; */
 static timer804_t * const tregs = (timer804_t *) TIMER_BASE;
 
 static uint32_t counter;
 
 static void timer_handler(void)
 {
+	time_t ts = read_rtc();
+	struct tm *timeinfo = localtime(&ts);
+
+	printf("counter is: %lu, time: %s", counter++, asctime(timeinfo));
+
 	tregs->timers[0].IntClr = 0;
-	printf("counter is: %lu\n", counter++);
 }
 
 void timer_init(void)

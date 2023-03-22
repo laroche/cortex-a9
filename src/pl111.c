@@ -5,35 +5,33 @@
 #define PL111_IOBASE		0x10020000U
 /* #define PL111_PALBASE	(PL111_IOBASE + 0x200U) */
 
-typedef unsigned int		uint32;
-
-typedef struct _PL111MMIO {
-	uint32		volatile tim0;
-	uint32		volatile tim1;
-	uint32		volatile tim2;
-	uint32		volatile tim3;
-	uint32		volatile upbase;
-	uint32		volatile f;
-	uint32		volatile control;
-	uint32		volatile g;
+typedef volatile struct {
+	uint32_t tim0;
+	uint32_t tim1;
+	uint32_t tim2;
+	uint32_t tim3;
+	uint32_t upbase;
+	uint32_t f;
+	uint32_t control;
+	uint32_t g;
 } PL111MMIO;
 
 static UG_GUI gui;
-static uint32 *fb = (uint32 *) 0x60110000U;
+static uint32_t * const fb = (uint32_t *) 0x60110000U;
 
-static inline void draw_pixel(uint32 x, uint32 y, uint32 c)
+static inline void draw_pixel(uint32_t x, uint32_t y, uint32_t c)
 {
 	fb[(y * 800) + x] = c;
 }
 
 void pdraw(UG_S16 x, UG_S16 y, UG_COLOR c)
 {
-	draw_pixel(x, y, c);
+	draw_pixel((uint32_t)x, (uint32_t)y, c);
 }
 
 void clcd_init(void)
 {
-	PL111MMIO *plio = (PL111MMIO*) PL111_IOBASE;
+	PL111MMIO * const plio = (PL111MMIO *) PL111_IOBASE;
 	int x;
  
 	/* 640x480 pixels */

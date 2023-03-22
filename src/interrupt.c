@@ -23,16 +23,20 @@ void __attribute__ ((interrupt("FIQ"))) c_fiq(void)
 
 void __attribute__ ((interrupt("IRQ"))) c_irq(void)
 {
+	int irq_num;
+
 	asm volatile("cpsid i" : : : "memory", "cc");
-	int irq_num = GIC_AcknowledgePending();
+
+	irq_num = GIC_AcknowledgePending();
 	GIC_ClearPendingIRQ(irq_num);
+
 	if (isr_table[irq_num] != NULL) {
 		isr_table[irq_num]();
 	} else {
 		printf("no handler found for %d\n", irq_num);
 	}
+
 	GIC_EndInterrupt(irq_num);
-	asm volatile("cpsie i" : : : "memory", "cc");
 }
 
 void enable_irq(IRQn_Type irq_num)
@@ -43,5 +47,5 @@ void enable_irq(IRQn_Type irq_num)
 void interrupt_init(void)
 {
 	GIC_Enable();
-	asm volatile("cpsie i" : : : "memory", "cc");
+	/* asm volatile("cpsie i" : : : "memory", "cc"); */
 }

@@ -4270,17 +4270,17 @@ __UG_CONST unsigned char font_32x53[256][212]={
 
 
 
-UG_S16 UG_Init( UG_GUI* g, void (*p)(UG_S16,UG_S16,UG_COLOR), UG_S16 x, UG_S16 y )
+UG_S16 UG_Init( UG_GUI* g, void (*p)(UG_S16, UG_S16, UG_COLOR), UG_S16 x, UG_S16 y )
 {
    UG_U8 i;
 
-   g->pset = (void(*)(UG_S16,UG_S16,UG_COLOR))p;
+   g->pset = (void(*)(UG_S16, UG_S16, UG_COLOR))p;
    g->x_dim = x;
    g->y_dim = y;
    g->console.x_start = 4;
    g->console.y_start = 4;
-   g->console.x_end = g->x_dim - g->console.x_start-1;
-   g->console.y_end = g->y_dim - g->console.x_start-1;
+   g->console.x_end = g->x_dim - g->console.x_start - 1;
+   g->console.y_end = g->y_dim - g->console.x_start - 1;
    g->console.x_pos = g->console.x_end;
    g->console.y_pos = g->console.y_end;
    g->font.char_h_space = 1;
@@ -4294,7 +4294,7 @@ UG_S16 UG_Init( UG_GUI* g, void (*p)(UG_S16,UG_S16,UG_COLOR), UG_S16 x, UG_S16 y
    g->last_window = NULL;
 
    /* Clear drivers */
-   for(i=0;i<NUMBER_OF_DRIVERS;i++)
+   for(i = 0; i<NUMBER_OF_DRIVERS; i++)
    {
       g->driver[i].driver = NULL;
       g->driver[i].state = 0;
@@ -4441,6 +4441,7 @@ void UG_DrawFrame( UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG_COLOR c )
 void UG_DrawRoundFrame( UG_S16 x1, UG_S16 y1, UG_S16 x2, UG_S16 y2, UG_S16 r, UG_COLOR c )
 {
    UG_S16 n;
+
    if ( x2 < x1 )
    {
       n = x2;
@@ -4549,7 +4550,7 @@ void UG_FillCircle( UG_S16 x0, UG_S16 y0, UG_S16 r, UG_COLOR c )
 
 void UG_DrawArc( UG_S16 x0, UG_S16 y0, UG_S16 r, UG_U8 s, UG_COLOR c )
 {
-   UG_S16 x,y,xd,yd,e;
+   UG_S16 x, y, xd, yd, e;
 
    if ( x0<0 ) return;
    if ( y0<0 ) return;
@@ -4690,8 +4691,8 @@ void UG_PutString( UG_S16 x, UG_S16 y, const char *str )
 
 void UG_PutChar( char chr, UG_S16 x, UG_S16 y, UG_COLOR fc, UG_COLOR bc )
 {
-   UG_U16 i,j,k,xo,yo,c,bn;
-   UG_U8 b,bt;
+   UG_U16 i, j, k, xo, yo, c, bn;
+   UG_U8 b, bt;
    unsigned char* p;
 
    bt = (UG_U8)chr;
@@ -4742,7 +4743,7 @@ void UG_PutChar( char chr, UG_S16 x, UG_S16 y, UG_COLOR fc, UG_COLOR bc )
    }
 }
 
-void UG_ConsolePutString( char* str )
+void UG_ConsolePutString( const char* str )
 {
    char chr;
 

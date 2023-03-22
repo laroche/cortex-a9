@@ -79,18 +79,18 @@ typedef struct
  */
 typedef struct
 {
-  __IO uint32_t ICCICR;          // +0x000 - RW - CPU Interface Control Register
-  __IO uint32_t ICCPMR;          // +0x004 - RW - Interrupt Priority Mask Register
-  __IO uint32_t ICCBPR;          // +0x008 - RW - Binary Point Register
-  __I  uint32_t ICCIAR;          // +0x00C - RO - Interrupt Acknowledge Register
-  __IO uint32_t ICCEOIR;         // +0x010 - WO - End of Interrupt Register
-  __I  uint32_t ICCRPR;          // +0x014 - RO - Running Priority Register
-  __I  uint32_t ICCHPIR;         // +0x018 - RO - Highest Pending Interrupt Register
-  __IO uint32_t ICCABPR;         // +0x01C - RW - Aliased Binary Point Register
+  __IO uint32_t ICCICR;          /* +0x000 - RW - CPU Interface Control Register */
+  __IO uint32_t ICCPMR;          /* +0x004 - RW - Interrupt Priority Mask Register */
+  __IO uint32_t ICCBPR;          /* +0x008 - RW - Binary Point Register */
+  __I  uint32_t ICCIAR;          /* +0x00C - RO - Interrupt Acknowledge Register */
+  __IO uint32_t ICCEOIR;         /* +0x010 - WO - End of Interrupt Register */
+  __I  uint32_t ICCRPR;          /* +0x014 - RO - Running Priority Register */
+  __I  uint32_t ICCHPIR;         /* +0x018 - RO - Highest Pending Interrupt Register */
+  __IO uint32_t ICCABPR;         /* +0x01C - RW - Aliased Binary Point Register */
 
        uint32_t RESERVED[55];
 
-  __I  uint32_t ICCIIDR;         // +0x0FC - RO - CPU Interface Identification Register
+  __I  uint32_t ICCIIDR;         /* +0x0FC - RO - CPU Interface Identification Register */
 }  GICInterface_Type;
 
 typedef enum IRQn{

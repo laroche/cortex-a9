@@ -42,12 +42,12 @@ const uint32_t GICInterface_BASE = GIC_INTERFACE;
 
 void GIC_EnableDistributor(void)
 {
-    GICDistributor->ICDDCR |= 1; //enable distributor
+    GICDistributor->ICDDCR |= 1U; /* enable distributor */
 }
 
 void GIC_DisableDistributor(void)
 {
-    GICDistributor->ICDDCR &=~1; //disable distributor
+    GICDistributor->ICDDCR &= ~1; /* disable distributor */
 }
 
 uint32_t GIC_DistributorInfo(void)
@@ -71,7 +71,7 @@ void GIC_SetICDICFR (const uint32_t *ICDICFRn)
 {
     uint32_t i, num_irq;
 
-    //Get the maximum number of interrupts that the GIC supports
+    /* Get the maximum number of interrupts that the GIC supports */
     num_irq = 32 * ((GIC_DistributorInfo() & 0x1f) + 1);
 
     for (i = 0; i < (num_irq/16); i++)
@@ -84,17 +84,17 @@ uint32_t GIC_GetTarget(IRQn_Type IRQn)
 {
     volatile uint8_t* field = (volatile uint8_t*)&(GICDistributor->ICDIPTR[IRQn / 4]);
     field += IRQn % 4;
-    return ((uint32_t)*field & 0xf);
+    return (uint32_t)*field & 0xf;
 }
 
 void GIC_EnableInterface(void)
 {
-    GICInterface->ICCICR |= 1; //enable interface
+    GICInterface->ICCICR |= 1U; /* enable interface */
 }
 
 void GIC_DisableInterface(void)
 {
-    GICInterface->ICCICR &=~1; //disable distributor
+    GICInterface->ICCICR &= ~1; /* disable interface */
 }
 
 void GIC_DisableIRQ(IRQn_Type IRQn)
@@ -109,7 +109,7 @@ void GIC_SetPendingIRQ(IRQn_Type IRQn)
 
 void GIC_SetLevelModel(IRQn_Type IRQn, int8_t edge_level, int8_t model)
 {
-    volatile uint8_t* field = (volatile uint8_t*)&(GICDistributor->ICDICFR[IRQn / 16]);
+    volatile uint8_t *field = (volatile uint8_t *)&(GICDistributor->ICDICFR[IRQn / 16]);
     int  bit_shift = (IRQn % 16)<<1;
     uint8_t save_byte;
 
@@ -119,7 +119,7 @@ void GIC_SetLevelModel(IRQn_Type IRQn, int8_t edge_level, int8_t model)
     save_byte = *field;
     save_byte &= ((uint8_t)~(3u << bit_shift));
 
-    *field = save_byte | ((uint8_t)((edge_level<<1) | model)<< bit_shift);
+    *field = (uint8_t)(save_byte | ((uint8_t)((edge_level << 1) | model) << bit_shift));
 }
 
 void GIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
@@ -138,12 +138,12 @@ uint32_t GIC_GetPriority(IRQn_Type IRQn)
 
 void GIC_InterfacePriorityMask(uint32_t priority)
 {
-    GICInterface->ICCPMR = priority & 0xff; //set priority mask
+    GICInterface->ICCPMR = priority & 0xff; /* set priority mask */
 }
 
 void GIC_SetBinaryPoint(uint32_t binary_point)
 {
-    GICInterface->ICCBPR = binary_point & 0x07; //set binary point
+    GICInterface->ICCBPR = binary_point & 0x07; /* set binary point */
 }
 
 uint32_t GIC_GetBinaryPoint(uint32_t binary_point __attribute__ ((unused)))
@@ -158,7 +158,7 @@ uint32_t GIC_GetIRQStatus(IRQn_Type IRQn)
     active = ((GICDistributor->ICDABR[IRQn / 32])  >> (IRQn % 32)) & 0x1;
     pending =((GICDistributor->ICDISPR[IRQn / 32]) >> (IRQn % 32)) & 0x1;
 
-    return ((active<<1) | pending);
+    return (active<<1) | pending;
 }
 
 void GIC_SendSGI(IRQn_Type IRQn, uint32_t target_list, uint32_t filter_list)
@@ -168,7 +168,7 @@ void GIC_SendSGI(IRQn_Type IRQn, uint32_t target_list, uint32_t filter_list)
 
 void GIC_DistInit(void)
 {
-    //IRQn_Type i;
+    /* IRQn_Type i; */
     uint32_t i;
     uint32_t num_irq = 0;
     uint32_t priority_field;
@@ -277,5 +277,5 @@ void GIC_CPUInterfaceInit(void)
 void GIC_Enable(void)
 {
     GIC_DistInit();
-    GIC_CPUInterfaceInit(); //per CPU
+    GIC_CPUInterfaceInit(); /* per CPU */
 }
