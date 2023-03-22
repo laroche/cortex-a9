@@ -37,7 +37,6 @@ SECTIONS {
         *(SORT(.dtors.*))
         *(.dtors)
         KEEP(*(.eh_frame*))
-        _end_text = .;
     } >RAM
 
         .ARM.extab : 
@@ -52,6 +51,7 @@ SECTIONS {
         } > RAM
         __exidx_end = .;
 
+    . = ALIGN(4);
     _end_text = .;
 
     .data :
@@ -86,9 +86,9 @@ SECTIONS {
         _end_data = .;
     } >RAM 
 
+    . = ALIGN(4);
     .bss :
     {
-         . = ALIGN(4);
         _start_bss = .;
         *(.bss)
         *(.bss*)
@@ -101,7 +101,6 @@ SECTIONS {
     .heap :
     {
 	__end__ = .;
-        /* _heap_start = .; */
         /* "end" is used by newlib's syscalls!!! */
         PROVIDE(end = .);
         PROVIDE(_heap_start = end );
@@ -115,9 +114,8 @@ SECTIONS {
 
     .ARM.attributes 0 : { *(.ARM.attributes) }
 
-
     .stack : {
-    statckSTART = .;
+
     . = . + 0x0001000;
     . = ALIGN(4);
     stackSVC = .;
@@ -141,8 +139,6 @@ SECTIONS {
     . = . + 0x00001000;
     . = ALIGN(4);
     stackUSR = .;
-    
-    stack_end = .;
     
     } >RAM
 }

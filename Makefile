@@ -1,44 +1,49 @@
-TOOLCHAIN = arm-none-eabi
-TARGET = kernel.elf
-ARMARCH = armv7-a
+SRCDIR = src
+OBJDIR = obj
+BINDIR = bin
+
+KERNEL = $(BINDIR)/kernel.elf
 CORE = cortex-a9
-CC = $(TOOLCHAIN)-gcc
-AS = $(TOOLCHAIN)-as
-SIZE = $(TOOLCHAIN)-size
-DUMP = $(TOOLCHAIN)-objdump
 
-SRCDIR   = src
-OBJDIR   = obj
-BINDIR   = bin
+TOOLCHAIN = arm-none-eabi-
+CC = $(TOOLCHAIN)gcc
+AS = $(TOOLCHAIN)as
+SIZE = $(TOOLCHAIN)size
+DUMP = $(TOOLCHAIN)objdump
+GDB = $(TOOLCHAIN)gdb
 
-LFILE = $(SRCDIR)/linker.ld
-# Compile flags here
-CFLAGS   = -std=gnu11 -Wall -nostartfiles -fno-exceptions -mcpu=$(CORE) -static -g
-AFLAGS   = 
-LINKER   = $(CC) -o
-# linking flags here
-LFLAGS   = -Wall -T $(LFILE) -nostartfiles -fno-exceptions --specs=nosys.specs -mcpu=$(CORE) -static -g -lc
+OPTS     = --specs=nano.specs --specs=nosys.specs -nostartfiles
+CFLAGS   = -mcpu=$(CORE) -O2 -Wall -Wextra -pedantic $(OPTS) -g
+#CFLAGS += -Wundef -Wshadow -Wwrite-strings -Wold-style-definition -Wcast-align=strict -Wunreachable-code -Waggregate-return -Wlogical-op -Wtrampolines -Wc90-c99-compat -Wc99-c11-compat
+#CFLAGS += -Wconversion -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wcast-qual -Wswitch-default
+CFLAGS  += -MMD -MP
+AFLAGS   = --warn
+LFLAGS   = -mcpu=$(CORE) -T $(SRCDIR)/linker.ld $(OPTS) -g
 
+CFLAGS += -ffunction-sections
+LFLAGS += -Wl,--gc-sections
+# For debugging:
+#LFLAGS += -Wl,--print-gc-sections
 
-GDB = $(TOOLCHAIN)-gdb
+#CFLAGS += -flto
+#LFLAGS += -flto
+
 QEMU = qemu-system-arm
-QEMU_OPTS = -M vexpress-a9 -serial mon:stdio -kernel
-
-
+QEMU_OPTS = -M vexpress-a9 -serial mon:stdio
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
 AS_FILES := $(wildcard $(SRCDIR)/*.S)
 OBJECTS_C := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
 OBJECTS_S := $(addprefix $(OBJDIR)/,$(notdir $(AS_FILES:.S=.o)))
 OBJECTS_ALL := $(OBJECTS_S) $(OBJECTS_C)
-rm = rm -f
 
-
-$(BINDIR)/$(TARGET): $(OBJECTS_ALL)
+$(KERNEL): $(OBJECTS_ALL)
 	@mkdir -p $(@D)
-	@$(LINKER) $@ $(LFLAGS) $(OBJECTS_ALL)
-	@echo "Linking complete!"
+	$(CC) $(LFLAGS) $(OBJECTS_ALL) -o $@ -Wl,-Map=$(BINDIR)/kernel.map
+	$(DUMP) -d $@ > $(BINDIR)/kernel.lst
 	@$(SIZE) $@
+
+-include $(wildcard $(OBJDIR)/$*.d)
 
 $(OBJECTS_ALL) : | obj
 
@@ -46,28 +51,22 @@ $(OBJDIR):
 	@mkdir -p $@
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@echo "Compiled "$<" successfully!"
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.S
-	@$(AS) $(AFLAGS) $< -o $@
-	@echo "Assembled "$<" successfully!"
+	$(AS) $(AFLAGS) $< -o $@
 
-qemu: 
-	$(QEMU) $(QEMU_OPTS) $(BINDIR)/$(TARGET)
+.PHONY: qemu dqemu gdb clean
 
-gdb: 
-	$(GDB) $(BINDIR)/$(TARGET)
+qemu: $(KERNEL)
+	QEMU_AUDIO_DRV=none $(QEMU) $(QEMU_OPTS) -kernel $(KERNEL)
 
-dqemu: all
-	$(QEMU) -s -S $(QEMU_OPTS) $(BINDIR)/$(TARGET)
+dqemu: $(KERNEL)
+	QEMU_AUDIO_DRV=none $(QEMU) -s -S $(QEMU_OPTS) -kernel $(KERNEL)
 
-.PHONY: clean
+gdb:
+	$(GDB) $(KERNEL)
+
 clean:
-	@$(rm) $(OBJECTS_ALL)
-	@echo "Cleanup complete!"
+	rm -fr $(OBJDIR) $(BINDIR)
 
-.PHONY: remove
-remove: clean
-	@$(rm) $(BINDIR)/$(TARGET)
-	@echo "Executable removed!"

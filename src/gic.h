@@ -50,6 +50,9 @@
 
 #define GIC_INTERFACE 0x1e000100
 #define GIC_DISTRIBUTOR 0x1e001000
+#define GICInterface        ((GICInterface_Type        *)     GIC_INTERFACE )   /*!< GIC Interface configuration struct */
+#define GICDistributor      ((GICDistributor_Type      *)     GIC_DISTRIBUTOR ) /*!< GIC Distributor configuration struct */
+
 /** \brief  Structure type to access the Generic Interrupt Controller Distributor (GICD)
  */
 typedef struct
@@ -211,7 +214,11 @@ void GIC_DisableInterface(void);
 
     \return             Interrupt number
  */
-IRQn_Type GIC_AcknowledgePending(void);
+static inline IRQn_Type GIC_AcknowledgePending(void)
+{
+    return (IRQn_Type)(GICInterface->ICCIAR);
+}
+
 
 /** \brief  End Interrupt
 
@@ -219,8 +226,10 @@ IRQn_Type GIC_AcknowledgePending(void);
 
     \param [in]   IRQn  Interrupt number.
  */
-void GIC_EndInterrupt(IRQn_Type IRQn);
-
+static inline void GIC_EndInterrupt(IRQn_Type IRQn)
+{
+    GICInterface->ICCEOIR = IRQn;
+}
 
 /** \brief  Enable Interrupt
 
@@ -228,7 +237,10 @@ void GIC_EndInterrupt(IRQn_Type IRQn);
 
     \param [in]      IRQn  External interrupt number.
  */
-void GIC_EnableIRQ(IRQn_Type IRQn);
+static inline void GIC_EnableIRQ(IRQn_Type IRQn)
+{
+    GICDistributor->ICDISER[IRQn / 32] = 1U << (IRQn % 32);
+}
 
 /** \brief  Disable Interrupt
 
@@ -252,7 +264,10 @@ void GIC_SetPendingIRQ(IRQn_Type IRQn);
 
     \param [in]      IRQn  Number of the interrupt for clear pending
  */
-void GIC_ClearPendingIRQ(IRQn_Type IRQn);
+static inline void GIC_ClearPendingIRQ(IRQn_Type IRQn)
+{
+    GICDistributor->ICDICPR[IRQn / 32] = 1U << (IRQn % 32);
+}
 
 /** \brief  Int_config field for each interrupt supported by the GIC.
 

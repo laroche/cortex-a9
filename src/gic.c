@@ -36,9 +36,6 @@
 
 #include "gic.h"
 
-#define GICDistributor      ((GICDistributor_Type      *)     GIC_DISTRIBUTOR ) /*!< GIC Distributor configuration struct */
-#define GICInterface        ((GICInterface_Type        *)     GIC_INTERFACE )   /*!< GIC Interface configuration struct */
-
 /* Globals for use of post-scatterloading code that must access GIC */
 const uint32_t GICDistributor_BASE = GIC_DISTRIBUTOR;
 const uint32_t GICInterface_BASE = GIC_INTERFACE;
@@ -100,34 +97,14 @@ void GIC_DisableInterface(void)
     GICInterface->ICCICR &=~1; //disable distributor
 }
 
-IRQn_Type GIC_AcknowledgePending(void)
-{
-    return (IRQn_Type)(GICInterface->ICCIAR);
-}
-
-void GIC_EndInterrupt(IRQn_Type IRQn)
-{
-    GICInterface->ICCEOIR = IRQn;
-}
-
-void GIC_EnableIRQ(IRQn_Type IRQn)
-{
-    GICDistributor->ICDISER[IRQn / 32] = 1 << (IRQn % 32);
-}
-
 void GIC_DisableIRQ(IRQn_Type IRQn)
 {
-    GICDistributor->ICDICER[IRQn / 32] = 1 << (IRQn % 32);
+    GICDistributor->ICDICER[IRQn / 32] = 1U << (IRQn % 32);
 }
 
 void GIC_SetPendingIRQ(IRQn_Type IRQn)
 {
-    GICDistributor->ICDISPR[IRQn / 32] = 1 << (IRQn % 32);
-}
-
-void GIC_ClearPendingIRQ(IRQn_Type IRQn)
-{
-    GICDistributor->ICDICPR[IRQn / 32] = 1 << (IRQn % 32);
+    GICDistributor->ICDISPR[IRQn / 32] = 1U << (IRQn % 32);
 }
 
 void GIC_SetLevelModel(IRQn_Type IRQn, int8_t edge_level, int8_t model)
@@ -169,7 +146,7 @@ void GIC_SetBinaryPoint(uint32_t binary_point)
     GICInterface->ICCBPR = binary_point & 0x07; //set binary point
 }
 
-uint32_t GIC_GetBinaryPoint(uint32_t binary_point)
+uint32_t GIC_GetBinaryPoint(uint32_t binary_point __attribute__ ((unused)))
 {
     return (uint32_t)GICInterface->ICCBPR;
 }

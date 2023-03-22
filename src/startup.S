@@ -1,5 +1,5 @@
-.global _Reset
 .section .isr_vector
+.global _Reset
 _Reset:
 	B reset_handler
 	B .
@@ -9,31 +9,36 @@ _Reset:
 	B .
 	B c_irq
 	B c_fiq
+
 .text
 reset_handler:
 	ldr r0, =0x60000000
 	mcr p15,0,r0,c12,c0,0
-	ldr sp,=stackSVC
+	ldr sp, =stackSVC
 
-	cps  #0x1b
-	ldr sp,=stackUND
+	cps #0x1b
+	ldr sp, =stackUND
 
 	cps #0x17
-	ldr sp,=stackABT
+	ldr sp, =stackABT
 
 	cps #0x12
-	ldr sp,=stackIRQ
+	ldr sp, =stackIRQ
 
 	cps #0x11
-	ldr sp,=stackFIQ
+	ldr sp, =stackFIQ
 
 	cps #010
-	ldr sp,=stackUSR
+	ldr sp, =stackUSR
 
-	BL _start
+	ldr r0, =_start_bss
+	ldr r1, =_end_bss
+	mov r2, #0
+bss_clear_loop:
+	cmp r0, r1
+	strlo r2, [r0], #4
+	blo bss_clear_loop
+
+	BL main
 	B .
 
-svc_handler:
-	BL c_svc
-//	movs pc,lr
-	

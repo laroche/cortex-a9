@@ -1,8 +1,11 @@
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #include <errno.h>
 #include <stddef.h> /* where ptrdiff_t is defined */
 #include <stdlib.h>
 #include <sys/stat.h>
 #include "pl011.h"
+
 /* Start of the heap.  */
 extern const char _HEAP_START __attribute__((section(".heap")));
 /* End of the heap (maximum value of heap_ptr).  */
@@ -14,12 +17,12 @@ extern const char _HEAP_MAX __attribute__((section(".heap")));
     1. Allocation is not within heap range */
 
 void _exit(int r){
-  while(1);
+  while (1) ;
 }
 
 int _write(int f, char *ptr, int len){
   int i;
-  for(i=0; i < len; i++){
+  for (i=0; i < len; i++) {
     uart_putc(*ptr++);
   }
   return len;
@@ -27,7 +30,8 @@ int _write(int f, char *ptr, int len){
 
 extern int main(void);
 
-void _start(void){
+void _start(void)
+{
 	main();
 	exit(0);
 }
@@ -35,6 +39,7 @@ void _start(void){
 int _fini(int i){
   return -1;
 }
+
 void * _sbrk (ptrdiff_t size)
 {
   /*
