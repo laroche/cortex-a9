@@ -123,14 +123,14 @@ typedef enum IRQn{
   UART1INTR_IRQn      = 38,
   UART2INTR_IRQn      = 39,
   UART3INTR_IRQn      = 40,
-  MCI_INTR0_IRQn      = 41,        
-  MCI_INTR1_IRQn      = 42,        
+  MCI_INTR0_IRQn      = 41,
+  MCI_INTR1_IRQn      = 42,
   AACI_INTR_IRQn      = 43,
   KMI0_INTR_IRQn      = 44,
   KMI1_INTR_IRQn      = 45,
   CLCDINTR_IRQn       = 46,
   ETH_INTR_IRQn       = 47,
-  USB_INT_IRQn        = 48, 
+  USB_INT_IRQn        = 48,
   PCIE_GPEN_IRQn      = 49
 } IRQn_Type;
 

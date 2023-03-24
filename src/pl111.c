@@ -33,7 +33,7 @@ void clcd_init(void)
 {
 	PL111MMIO * const plio = (PL111MMIO *) PL111_IOBASE;
 	int x;
- 
+
 	/* 640x480 pixels */
 	/* plio->tim0 = 0x3f1f3f9cU; */
 	plio->tim0 = 0x3f1f3cc4U;

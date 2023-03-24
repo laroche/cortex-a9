@@ -32,7 +32,7 @@
 
 #ifndef __UGUI_H
 #define __UGUI_H
-#define USE_COLOR_RGB888 
+#define USE_COLOR_RGB888
 #include <stdint.h>
 /* -------------------------------------------------------------------------------- */
 /* -- CONFIG SECTION                                                             -- */

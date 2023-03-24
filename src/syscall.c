@@ -12,7 +12,7 @@ extern const char _HEAP_START __attribute__((section(".heap")));
 extern const char _HEAP_MAX __attribute__((section(".heap")));
 
 /* Extend heap space by size bytes.
-   Return start of new space allocated, or -1 for errors 
+   Return start of new space allocated, or -1 for errors
    Error cases:
     1. Allocation is not within heap range */
 
@@ -51,7 +51,7 @@ void * _sbrk (ptrdiff_t size)
   static unsigned char init_sbrk = 0;
 
   /* heap_ptr is initialized to HEAP_START */
-  if (init_sbrk == 0) 
+  if (init_sbrk == 0)
   {
     heap_ptr = &_HEAP_START;
     init_sbrk = 1;
@@ -60,7 +60,7 @@ void * _sbrk (ptrdiff_t size)
   old_heap_ptr = heap_ptr;
 
   if ((heap_ptr + size) > &_HEAP_MAX)
-  { 
+  {
     /* top of heap is bigger than _HEAP_MAX */
     errno = ENOMEM;
     return (void *) -1;
