@@ -9,7 +9,7 @@ TOOLCHAIN = arm-none-eabi-
 CC = $(TOOLCHAIN)gcc
 AS = $(TOOLCHAIN)as
 SIZE = $(TOOLCHAIN)size
-DUMP = $(TOOLCHAIN)objdump
+OBJDUMP = $(TOOLCHAIN)objdump
 GDB = $(TOOLCHAIN)gdb
 
 OPTS     = --specs=nano.specs --specs=nosys.specs -nostartfiles
@@ -37,18 +37,18 @@ OBJECTS_C := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
 OBJECTS_S := $(addprefix $(OBJDIR)/,$(notdir $(AS_FILES:.S=.o)))
 OBJECTS_ALL := $(OBJECTS_S) $(OBJECTS_C)
 
-$(KERNEL): $(OBJECTS_ALL)
+$(KERNEL): $(OBJECTS_ALL) | $(OBJDIR)
 	@mkdir -p $(@D)
 	$(CC) $(LFLAGS) $(OBJECTS_ALL) -o $@ -Wl,-Map=$(BINDIR)/kernel.map
-	$(DUMP) -d $@ > $(BINDIR)/kernel.lst
-	@$(SIZE) $@
+	$(OBJDUMP) -d $@ > $(BINDIR)/kernel.lst
+	$(SIZE) $@
 
--include $(wildcard $(OBJDIR)/$*.d)
+-include $(wildcard $(OBJDIR)/*.d)
 
-$(OBJECTS_ALL) : | obj
+$(OBJECTS_ALL) : | $(OBJDIR)
 
 $(OBJDIR):
-	@mkdir -p $@
+	mkdir -p $@
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
