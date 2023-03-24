@@ -56,7 +56,7 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.c
 $(OBJDIR)/%.o : $(SRCDIR)/%.S
 	$(AS) $(AFLAGS) $< -o $@
 
-.PHONY: qemu dqemu gdb clean
+.PHONY: qemu dqemu run gdb clean
 
 qemu: $(KERNEL)
 	QEMU_AUDIO_DRV=none $(QEMU) $(QEMU_OPTS) -kernel $(KERNEL)
@@ -64,7 +64,9 @@ qemu: $(KERNEL)
 dqemu: $(KERNEL)
 	QEMU_AUDIO_DRV=none $(QEMU) -s -S $(QEMU_OPTS) -kernel $(KERNEL)
 
-gdb:
+run: qemu
+
+gdb: $(KERNEL)
 	$(GDB) $(KERNEL)
 
 clean:
