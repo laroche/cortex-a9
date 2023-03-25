@@ -20,7 +20,7 @@ CFLAGS  += -MMD -MP
 AFLAGS   = --warn
 LFLAGS   = -mcpu=$(CORE) -T $(SRCDIR)/linker.ld $(OPTS) -g
 
-CFLAGS += -ffunction-sections
+CFLAGS += -ffunction-sections -fdata-sections
 LFLAGS += -Wl,--gc-sections
 # For debugging:
 #LFLAGS += -Wl,--print-gc-sections
