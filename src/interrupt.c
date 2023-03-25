@@ -1,6 +1,6 @@
+#include <stdio.h>
 #include "interrupt.h"
 #include "pl050.h"
-#include <stdio.h>
 
 #define MAXIRQNUM 50U
 
