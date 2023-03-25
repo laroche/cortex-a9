@@ -16,26 +16,25 @@
 #define SP804_TIMER_ONESHOT      (1U << 0)
 
 typedef volatile struct {
-    struct {
-        uint32_t Load;
-        uint32_t Value;
-        uint32_t Control;
-        uint32_t IntClr;
-        uint32_t RIS;
-        uint32_t MIS;
-        uint32_t BGLoad;
-        uint32_t Reserved;
-    } timers[2];
+	struct {
+		uint32_t Load;
+		uint32_t Value;
+		uint32_t Control;
+		uint32_t IntClr;
+		uint32_t RIS;
+		uint32_t MIS;
+		uint32_t BGLoad;
+		uint32_t Reserved;
+	} timers[2];
 } timer804_t;
 
 #define TIMER_BASE 0x10011000U
 
 static timer804_t * const tregs = (timer804_t *) TIMER_BASE;
 
-static uint32_t counter;
-
 static void timer_handler(void)
 {
+	static uint32_t counter = 0U;
 	time_t ts = read_rtc();
 	struct tm *timeinfo = localtime(&ts);
 
@@ -46,8 +45,6 @@ static void timer_handler(void)
 
 void timer_init(void)
 {
-	counter = 0U;
-
 	tregs->timers[0].Control = SP804_TIMER_PERIODIC | SP804_TIMER_32BIT  | SP804_TIMER_PRESCALE_256 | SP804_TIMER_INT_ENABLE;
 	tregs->timers[0].Load = 0U;
 	tregs->timers[0].Value = 0U;
