@@ -15,9 +15,9 @@ int _write(int f __unused, char *ptr, int len)
 }
 
 /* Start of the heap.  */
-extern const char _HEAP_START __attribute__((section(".heap")));
+extern const char _heap_start __attribute__((section(".heap")));
 /* End of the heap (maximum value of heap_ptr).  */
-extern const char _HEAP_MAX __attribute__((section(".heap")));
+extern const char _heap_end __attribute__((section(".heap")));
 
 /* Extend heap space by size bytes.
    Return start of new space allocated, or -1 for errors
@@ -28,17 +28,17 @@ void * _sbrk (ptrdiff_t size)
   static const char * heap_ptr;  /* pointer to head of heap (from linker script file */
   const char * old_heap_ptr;
 
-  /* heap_ptr is initialized to HEAP_START */
+  /* heap_ptr is initialized to _heap_start */
   if (heap_ptr == 0)
   {
-    heap_ptr = &_HEAP_START;
+    heap_ptr = &_heap_start;
   }
 
   old_heap_ptr = heap_ptr;
 
-  if ((heap_ptr + size) > &_HEAP_MAX)
+  if ((heap_ptr + size) > &_heap_end)
   {
-    /* top of heap is bigger than _HEAP_MAX */
+    /* top of heap is bigger than _heap_end */
     errno = ENOMEM;
     return (void *) -1;
   }

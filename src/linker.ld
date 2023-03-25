@@ -4,7 +4,6 @@ ENTRY(_Reset)
 MEMORY
 {
     RAM (xrw)       : ORIGIN = 0x60000000, LENGTH = 100M /* 100MB */
-
 }
 
 heap_size = 0x1000; /* 4K */
@@ -39,17 +38,17 @@ SECTIONS {
         KEEP(*(.eh_frame*))
     } >RAM
 
-        .ARM.extab : 
-        {
-                *(.ARM.extab* .gnu.linkonce.armextab.*)
-        } > RAM
+    .ARM.extab :
+    {
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+    } > RAM
 
-        __exidx_start = .;
-        .ARM.exidx :
-        {
-                *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        } > RAM
-        __exidx_end = .;
+    __exidx_start = .;
+    .ARM.exidx :
+    {
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } > RAM
+    __exidx_end = .;
 
     . = ALIGN(4);
     _end_text = .;
@@ -59,7 +58,7 @@ SECTIONS {
         _start_data = .;
         *(vtable)
         *(.data)
-        *(.data*) 
+        *(.data*)
         . = ALIGN(4);
         /* preinit data */
         PROVIDE_HIDDEN (__preinit_array_start = .);
@@ -84,7 +83,7 @@ SECTIONS {
         KEEP(*(.jcr*))
         . = ALIGN(4);
         _end_data = .;
-    } >RAM 
+    } >RAM
 
     . = ALIGN(4);
     .bss :
@@ -100,16 +99,14 @@ SECTIONS {
     . = ALIGN(4);
     .heap :
     {
-	__end__ = .;
+        __end__ = .;
         /* "end" is used by newlib's syscalls!!! */
         PROVIDE(end = .);
         PROVIDE(_heap_start = end );
-        PROVIDE(_HEAP_START = end );
-        
+
         . = . + heap_size;
-        
+
         PROVIDE(_heap_end = .);
-        PROVIDE(_HEAP_MAX = .);
     } >RAM
 
     .ARM.attributes 0 : { *(.ARM.attributes) }
@@ -119,27 +116,27 @@ SECTIONS {
     . = . + 0x0001000;
     . = ALIGN(4);
     stackSVC = .;
-    
+
     . = . + 0x00001000;
     . = ALIGN(4);
     stackUND = .;
-    
+
     . = . + 0x00001000;
     . = ALIGN(4);
     stackABT = .;
-    
+
     . = . + 0x00001000;
     . = ALIGN(4);
     stackIRQ = .;
-    
+
     . = . + 0x00001000;
     . = ALIGN(4);
-    stackFIQ = .;   
-    
+    stackFIQ = .;
+
     . = . + 0x00001000;
     . = ALIGN(4);
     stackUSR = .;
-    
+
     } >RAM
 }
 _end = .;
