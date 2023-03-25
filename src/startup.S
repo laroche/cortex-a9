@@ -1,4 +1,4 @@
-.section .isr_vector
+.section .isr_vector, "x"
 .global _Reset
 _Reset:
 	b reset_handler
@@ -24,6 +24,14 @@ reset_handler:
 
 	ldr sp, =stackSVC
 
+	ldr r0, =_start_bss
+	ldr r1, =_end_bss
+	mov r2, #0
+bss_clear_loop:
+	cmp r0, r1
+	strlo r2, [r0], #4
+	blo bss_clear_loop
+
 	//cps #0x1b
 	//ldr sp, =stackUND
 
@@ -40,14 +48,6 @@ reset_handler:
 
 	cps #0x10
 	ldr sp, =stackUSR
-
-	ldr r0, =_start_bss
-	ldr r1, =_end_bss
-	mov r2, #0
-bss_clear_loop:
-	cmp r0, r1
-	strlo r2, [r0], #4
-	blo bss_clear_loop
 
 	bl main
 loop:
