@@ -7,7 +7,6 @@ CORE = cortex-a9
 
 TOOLCHAIN = arm-none-eabi-
 CC = $(TOOLCHAIN)gcc
-AS = $(TOOLCHAIN)as
 SIZE = $(TOOLCHAIN)size
 OBJDUMP = $(TOOLCHAIN)objdump
 GDB = $(TOOLCHAIN)gdb
@@ -17,7 +16,6 @@ CFLAGS   = -mcpu=$(CORE) -O2 -Wall -Wextra -pedantic $(OPTS) -g
 #CFLAGS += -Wundef -Wshadow -Wwrite-strings -Wold-style-definition -Wcast-align=strict -Wunreachable-code -Waggregate-return -Wlogical-op -Wtrampolines -Wc90-c99-compat -Wc99-c11-compat
 #CFLAGS += -Wconversion -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wcast-qual -Wswitch-default
 CFLAGS  += -MMD -MP
-AFLAGS   = --warn
 LFLAGS   = -mcpu=$(CORE) -T $(SRCDIR)/linker.ld $(OPTS) -g
 
 CFLAGS += -ffunction-sections -fdata-sections
@@ -54,7 +52,7 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.S
-	$(AS) $(AFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY: qemu dqemu run gdb clean
 
