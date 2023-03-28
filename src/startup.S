@@ -1,3 +1,5 @@
+#include "cortex_config.h"
+
 .section .isr_vector, "x"
 .global _Reset
 _Reset:
@@ -11,12 +13,16 @@ _Reset:
 	b c_fiq
 
 .text
+
 reset_handler:
+
+#if	CONFIG_SMP
 	/* only cpu0 continues, all others loop */
 	mrc p15,#0,r1,c0,c0,#5
 	and r1, r1, #3
 	cmp r1, #0
 	bne loop
+#endif
 
 	/* set vector address */
 	ldr r0, =0x60000000
@@ -24,13 +30,24 @@ reset_handler:
 
 	ldr sp, =stackSVC
 
-	ldr r0, =_start_bss
-	ldr r1, =_end_bss
+	ldr r0, =__bss_start
+	ldr r1, =end
 	mov r2, #0
 bss_clear_loop:
 	cmp r0, r1
 	strlo r2, [r0], #4
 	blo bss_clear_loop
+
+#if	CONFIG_STACK_INIT
+	ldr r0, =__stack_start
+	ldr r1, =__stack_end
+	movw r3, #0xbeef
+	movt r3, #0xdead
+stack_clear_loop:
+	cmp r0, r1
+	strlo r2, [r0], #4
+	blo stack_clear_loop
+#endif
 
 	//cps #0x1b
 	//ldr sp, =stackUND

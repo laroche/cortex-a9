@@ -6,10 +6,8 @@ if I have time I'm planning to clean up the code and seperate things like (Makef
 
 ## TODO
 
-- optionally initialize stack with 0xdeadbeef
 - Why is no "\n" needed at the end of printf() for period timer handler?
 - Merge Cortex-A15 support?
-- Reduce syscall.c to minimal needed functions.
 - Update to newest uGUI release.
 - Add more SMP support.
 

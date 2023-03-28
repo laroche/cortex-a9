@@ -88,12 +88,11 @@ SECTIONS {
     . = ALIGN(4);
     .bss :
     {
-        _start_bss = .;
+        __bss_start = .;
         *(.bss)
         *(.bss*)
         *(COMMON)
         . = ALIGN(4);
-        _end_bss = .;
     } >RAM
 
     . = ALIGN(4);
@@ -111,32 +110,29 @@ SECTIONS {
 
     .ARM.attributes 0 : { *(.ARM.attributes) }
 
+    . = ALIGN(8);
     .stack : {
+    __stack_start = .;
 
-    . = . + 0x0001000;
-    . = ALIGN(4);
+    . = . + 0x00001000;
     stackSVC = .;
 
     . = . + 0x00001000;
-    . = ALIGN(4);
     stackUND = .;
 
     . = . + 0x00001000;
-    . = ALIGN(4);
     stackABT = .;
 
     . = . + 0x00001000;
-    . = ALIGN(4);
     stackIRQ = .;
 
     . = . + 0x00001000;
-    . = ALIGN(4);
     stackFIQ = .;
 
     . = . + 0x00001000;
-    . = ALIGN(4);
     stackUSR = .;
 
+    __stack_end = .;
     } >RAM
 }
 _end = .;
