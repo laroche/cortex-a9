@@ -41,13 +41,13 @@ SECTIONS {
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > RAM
+    } >RAM
 
     __exidx_start = .;
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    } > RAM
+    } >RAM
     __exidx_end = .;
 
     . = ALIGN(4);
