@@ -47,7 +47,7 @@ void GIC_EnableDistributor(void)
 
 void GIC_DisableDistributor(void)
 {
-    GICDistributor->ICDDCR &= ~1; /* disable distributor */
+    GICDistributor->ICDDCR &= ~1U; /* disable distributor */
 }
 
 uint32_t GIC_DistributorInfo(void)
@@ -94,7 +94,7 @@ void GIC_EnableInterface(void)
 
 void GIC_DisableInterface(void)
 {
-    GICInterface->ICCICR &= ~1; /* disable interface */
+    GICInterface->ICCICR &= ~1U; /* disable interface */
 }
 
 void GIC_DisableIRQ(IRQn_Type IRQn)
