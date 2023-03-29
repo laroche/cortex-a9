@@ -48,8 +48,6 @@ void timer_init(void)
 	tregs->timers[0].Control = SP804_TIMER_PERIODIC | SP804_TIMER_32BIT  | SP804_TIMER_PRESCALE_256 | SP804_TIMER_INT_ENABLE;
 	tregs->timers[0].Load = 0U;
 	tregs->timers[0].Value = 0U;
-	tregs->timers[0].RIS = 0U;
-	tregs->timers[0].MIS = 0U;
 	tregs->timers[0].BGLoad = 0x1000U;
 	tregs->timers[0].Control |= SP804_TIMER_ENABLE;
 
