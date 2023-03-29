@@ -41,12 +41,12 @@ bss_clear_loop:
 #if	CONFIG_STACK_INIT
 	ldr r0, =__stack_start
 	ldr r1, =__stack_end
-	movw r3, #0xbeef
-	movt r3, #0xdead
-stack_clear_loop:
+	movw r2, #0xbeef
+	movt r2, #0xdead
+stack_init_loop:
 	cmp r0, r1
 	strlo r2, [r0], #4
-	blo stack_clear_loop
+	blo stack_init_loop
 #endif
 
 	//cps #0x1b
