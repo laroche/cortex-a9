@@ -1,9 +1,8 @@
 ENTRY(_Reset)
 
-/* Specify the memory areas */
 MEMORY
 {
-    RAM (xrw)       : ORIGIN = 0x60000000, LENGTH = 100M /* 100MB */
+    RAM (xrw) : ORIGIN = 0x60000000, LENGTH = 32M
 }
 
 heap_size = 0x1000; /* 4K */
@@ -112,27 +111,27 @@ SECTIONS {
 
     . = ALIGN(8);
     .stack : {
-    __stack_start = .;
+        __stack_start = .;
 
-    . = . + 0x00001000;
-    stackSVC = .;
+        . = . + 0x00001000;
+        stackSVC = .;
 
-    . = . + 0x00001000;
-    stackUND = .;
+        . = . + 0x00001000;
+        stackUND = .;
 
-    . = . + 0x00001000;
-    stackABT = .;
+        . = . + 0x00001000;
+        stackABT = .;
 
-    . = . + 0x00001000;
-    stackIRQ = .;
+        . = . + 0x00001000;
+        stackIRQ = .;
 
-    . = . + 0x00001000;
-    stackFIQ = .;
+        . = . + 0x00001000;
+        stackFIQ = .;
 
-    . = . + 0x00001000;
-    stackUSR = .;
+        . = . + 0x00001000;
+        stackUSR = .;
 
-    __stack_end = .;
+        __stack_end = .;
     } >RAM
 }
 _end = .;
