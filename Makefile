@@ -27,7 +27,7 @@ LFLAGS += -Wl,--gc-sections
 #LFLAGS += -flto
 
 QEMU = qemu-system-arm
-QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio
+QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
 AS_FILES := $(wildcard $(SRCDIR)/*.S)
@@ -43,7 +43,7 @@ $(KERNEL): $(OBJECTS_ALL) | $(OBJDIR)
 
 -include $(wildcard $(OBJDIR)/*.d)
 
-$(OBJECTS_ALL) : | $(OBJDIR)
+$(OBJECTS_ALL) : Makefile | $(OBJDIR)
 
 $(OBJDIR):
 	mkdir -p $@
