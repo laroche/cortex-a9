@@ -27,13 +27,30 @@ LFLAGS += -Wl,--gc-sections
 #LFLAGS += -flto
 
 QEMU = qemu-system-arm
-QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors
+QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors,unimp
+# -d int
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
 AS_FILES := $(wildcard $(SRCDIR)/*.S)
 OBJECTS_C := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
 OBJECTS_S := $(addprefix $(OBJDIR)/,$(notdir $(AS_FILES:.S=.o)))
 OBJECTS_ALL := $(OBJECTS_S) $(OBJECTS_C)
+
+# Detect Windows with two possible ways. On Linux start parallel builds:
+ifeq ($(OS),Windows_NT)
+else
+ifeq '$(findstring ;,$(PATH))' ';'
+else
+CORES?=$(shell (nproc --all || sysctl -n hw.ncpu) 2>/dev/null || echo 1)
+ifneq ($(CORES),1)
+.PHONY: _all
+_all:
+	$(MAKE) all -j$(CORES)
+endif
+endif
+endif
+
+all: $(KERNEL)
 
 $(KERNEL): $(OBJECTS_ALL) | $(OBJDIR)
 	@mkdir -p $(@D)
@@ -54,7 +71,7 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.c
 $(OBJDIR)/%.o : $(SRCDIR)/%.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
-.PHONY: qemu dqemu run gdb clean
+.PHONY: all qemu dqemu run gdb clean
 
 qemu: $(KERNEL)
 	QEMU_AUDIO_DRV=none $(QEMU) $(QEMU_OPTS) -kernel $(KERNEL)
