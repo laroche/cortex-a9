@@ -205,6 +205,7 @@ void GIC_DistInit(void)
     GICDistributor->ICDICFR[ 3] = 0x555FFFFF;
     GICDistributor->ICDICFR[ 4] = 0x55555555;
     GICDistributor->ICDICFR[ 5] = 0x55555555;
+#if 0
     GICDistributor->ICDICFR[ 6] = 0x55555555;
     GICDistributor->ICDICFR[ 7] = 0x55555555;
     GICDistributor->ICDICFR[ 8] = 0x5555F555;
@@ -233,6 +234,7 @@ void GIC_DistInit(void)
     GICDistributor->ICDICFR[31] = 0x55555555;
     GICDistributor->ICDICFR[32] = 0x55555555;
     GICDistributor->ICDICFR[33] = 0x55555555;
+#endif
 
     //Enable distributor
     GIC_EnableDistributor();
