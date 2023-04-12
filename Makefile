@@ -26,6 +26,8 @@ LFLAGS += -Wl,--gc-sections
 #CFLAGS += -flto
 #LFLAGS += -flto
 
+CFLAGS += -DDEBUG
+
 QEMU = qemu-system-arm
 QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors,unimp
 # -d int

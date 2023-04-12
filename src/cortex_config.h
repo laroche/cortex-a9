@@ -6,3 +6,6 @@
 #else
 #define CONFIG_STACK_INIT 0
 #endif
+
+#define CONFIG_ISR_ASM 1
+#define CONFIG_ARM_ERRATA_775420 0
