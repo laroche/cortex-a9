@@ -1,8 +1,9 @@
 #include <errno.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "pl011.h"
 
-int _write(int f __unused, char *ptr, int len)
+int _write (int f __unused, char *ptr, int len)
 {
   int i;
 
@@ -37,5 +38,20 @@ void * _sbrk (ptrdiff_t size)
 
   /* success: update heap_ptr and return previous value */
   heap_ptr += size;
-  return (void *)old_heap_ptr;
+  return (void *) old_heap_ptr;
+}
+
+/* We disable "raise()" to reduce overall size for embedded usage.
+ * kill()/signal()/raise() are removed. _exit() just loops forever. */
+void __attribute__ ((noreturn)) abort (void)
+{
+#ifdef DEBUG
+  write (2, "Abort called\n", sizeof ("Abort called\n") - 1);
+#endif
+
+  while (1)
+  {
+      /* raise (SIGABRT); */
+      _exit (1);
+  }
 }
