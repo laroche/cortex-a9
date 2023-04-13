@@ -54,7 +54,7 @@ endif
 
 all: $(KERNEL)
 
-$(KERNEL): $(OBJECTS_ALL) | $(OBJDIR)
+$(KERNEL): $(OBJECTS_ALL) $(SRCDIR)/linker.ld | $(OBJDIR)
 	@mkdir -p $(@D)
 	$(CC) $(LFLAGS) $(OBJECTS_ALL) -o $@ -Wl,-Map=$(BINDIR)/kernel.map
 	$(OBJDUMP) -d $@ > $(BINDIR)/kernel.lst
