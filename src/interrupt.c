@@ -7,30 +7,30 @@
 
 static func_t isr_table[MAXIRQNUM];
 
-void install_isr(IRQn_Type irq_num, func_t handler)
+void install_isr (IRQn_Type irq_num, func_t handler)
 {
 	isr_table[irq_num] = handler;
 }
 
 #if CONFIG_ISR_ASM
-void SWInterrupt(void)
+void SWInterrupt (void)
 #else
-void __attribute__ ((interrupt("SWI"))) c_svc(void)
+void __attribute__ ((interrupt("SWI"))) c_svc (void)
 #endif
 {
 	printf("yaay SVC ticked\n");
 }
 
-void __attribute__ ((interrupt("FIQ"))) c_fiq(void)
+void __attribute__ ((interrupt("FIQ"))) c_fiq (void)
 {
 	printf("yaay FIQ ticked\n");
 }
 
-void __attribute__ ((interrupt("IRQ"))) c_irq(void)
+void __attribute__ ((interrupt("IRQ"))) c_irq (void)
 {
 	int irq_num;
 
-	asm volatile("cpsid i" : : : "memory", "cc");
+	/* __asm__ __volatile__("cpsid i" : : : "memory", "cc"); */
 
 	irq_num = GIC_AcknowledgePending();
 	GIC_ClearPendingIRQ(irq_num);
@@ -49,7 +49,7 @@ uint32_t UndefinedExceptionAddr;
 uint32_t PrefetchAbortAddr;
 uint32_t DataAbortAddr;
 
-void UndefinedException(void)
+void __attribute__ ((noreturn)) UndefinedException (void)
 {
 #ifdef DEBUG
 	printf("Undefined instruction at address %lx\n", UndefinedExceptionAddr);
@@ -58,7 +58,7 @@ void UndefinedException(void)
 	}
 }
 
-void PrefetchAbortInterrupt(void)
+void __attribute__ ((noreturn)) PrefetchAbortInterrupt (void)
 {
 #ifdef DEBUG
 	uint32_t FaultStatus;
@@ -80,7 +80,7 @@ void PrefetchAbortInterrupt(void)
 	}
 }
 
-void DataAbortInterrupt(void)
+void __attribute__ ((noreturn)) DataAbortInterrupt (void)
 {
 #ifdef DEBUG
 	uint32_t FaultStatus;
@@ -103,13 +103,13 @@ void DataAbortInterrupt(void)
 }
 #endif
 
-void enable_irq(IRQn_Type irq_num)
+void enable_irq (IRQn_Type irq_num)
 {
 	GIC_EnableIRQ(irq_num);
 }
 
-void interrupt_init(void)
+void interrupt_init (void)
 {
 	GIC_Enable();
-	/* asm volatile("cpsie i" : : : "memory", "cc"); */
+	/* __asm__ __volatile__("cpsie i" : : : "memory", "cc"); */
 }

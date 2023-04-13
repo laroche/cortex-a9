@@ -3,7 +3,7 @@
 .section .isr_vector, "x"
 .global _Reset
 _Reset:
-	b reset_handler
+	b ResetHandler
 #if	CONFIG_ISR_ASM
 	b UndefinedHandler
 	b SVCHandler
@@ -24,7 +24,7 @@ _Reset:
 
 .text
 
-reset_handler:
+ResetHandler:
 
 #if	CONFIG_SMP
 	/* only cpu0 continues, all others loop */
@@ -38,6 +38,7 @@ reset_handler:
 	ldr r0, =0x60000000
 	mcr p15, 0, r0, c12, c0, 0
 
+	/* CPU boots into SVC/Supervisor Mode 0x13: */
 	ldr sp, =stackSVC
 
 	ldr r0, =__bss_start
@@ -77,17 +78,19 @@ stack_init_loop:
 	cps #0x11
 	ldr sp, =stackFIQ
 
-	//cps #0x1f
-	//ldr sp, =stackSYS
+	/* cps #0x1f */
+	/* ldr sp, =stackSYS */
 
-	cpsie i
+	cpsie if
 
 	cps #0x10
 	ldr sp, =stackUSR
 
+	/* mov r0, #0 */
+	/* mov r1, #0 */
 	bl main
 loop:
-	wfe				/* wfi or wfe ??? */
+	wfe				/* XXX wfi or wfe ??? */
 	b loop
 
 
@@ -166,7 +169,7 @@ DataAbortHandler:
 
 	bl DataAbortInterrupt
 
-	ldmia sp!,{r0-r3,r12,lr}
+	ldmia sp!, {r0-r3,r12,lr}
 	subs pc, lr, #8
 
 #endif

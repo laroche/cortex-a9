@@ -25,7 +25,7 @@ static char kbdus[128] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 /* 0x70 - 0x7f */
 };
 
-static void kb_handler(void)
+static void kb_handler (void)
 {
 	uint8_t tsc = (uint8_t) kmi_kb->data;
 
@@ -34,7 +34,7 @@ static void kb_handler(void)
  	}
 }
 
-void kb_init(void)
+void kb_init (void)
 {
 	kmi_kb->cr = 0x14U;
 	kmi_kb->clk = 15U;

@@ -5,10 +5,10 @@ MEMORY
     RAM (xrw) : ORIGIN = 0x60000000, LENGTH = 32M
 }
 
-heap_size = 0x1000; /* 4K */
+heap_size = 0x10000; /* 64K */
 
 SECTIONS {
-    /*. = ORIGIN(RAM) + 0x10000;*/
+    /* . = ORIGIN(RAM) + 0x10000; */
     .text :
     {
         . = ALIGN(4);
@@ -34,6 +34,7 @@ SECTIONS {
         *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
         *(SORT(.dtors.*))
         *(.dtors)
+
         KEEP(*(.eh_frame*))
     } >RAM
 
@@ -58,6 +59,7 @@ SECTIONS {
         *(vtable)
         *(.data)
         *(.data*)
+
         . = ALIGN(4);
         /* preinit data */
         PROVIDE_HIDDEN (__preinit_array_start = .);
@@ -70,7 +72,6 @@ SECTIONS {
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
         PROVIDE_HIDDEN (__init_array_end = .);
-
 
         . = ALIGN(4);
         /* finit data */
@@ -107,7 +108,7 @@ SECTIONS {
         PROVIDE(_heap_end = .);
     } >RAM
 
-    .ARM.attributes 0 : { *(.ARM.attributes) }
+    .ARM.attributes 0 : { *(.ARM.attributes) } >RAM
 
     . = ALIGN(8);
     .stack : {

@@ -32,7 +32,7 @@ typedef volatile struct {
 
 static timer804_t * const tregs = (timer804_t *) TIMER_BASE;
 
-static void timer_handler(void)
+static void timer_handler (void)
 {
 	static uint32_t counter = 0U;
 	time_t ts = read_rtc();
@@ -43,7 +43,7 @@ static void timer_handler(void)
 	tregs->timers[0].IntClr = 0;
 }
 
-void timer_init(void)
+void timer_init (void)
 {
 	tregs->timers[0].Control = SP804_TIMER_PERIODIC | SP804_TIMER_32BIT  | SP804_TIMER_PRESCALE_256 | SP804_TIMER_INT_ENABLE;
 	tregs->timers[0].Load = 0U;
