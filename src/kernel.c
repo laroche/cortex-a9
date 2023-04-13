@@ -8,26 +8,26 @@
 
 int main (void)
 {
- 	interrupt_init();
+	interrupt_init();
 	clcd_init();
- 	kb_init();
- 	timer_init();
+	kb_init();
+	timer_init();
 
- 	UG_FillCircle(100, 100, 30, C_YELLOW);
- 	UG_FillCircle(200, 100, 10, C_RED);
- 	UG_FillCircle(250, 100, 10, C_BLUE);
- 	UG_FillCircle(350, 100, 20, C_GREEN);
- 	UG_FillCircle(300, 100, 10, 0xff0000);
- 	UG_DrawFrame(400, 400, 440, 440, C_WHITE);
- 	UG_FontSelect(&FONT_16X26);
- 	UG_SetBackcolor(C_BLACK);
+	UG_FillCircle(100, 100, 30, C_YELLOW);
+	UG_FillCircle(200, 100, 10, C_RED);
+	UG_FillCircle(250, 100, 10, C_BLUE);
+	UG_FillCircle(350, 100, 20, C_GREEN);
+	UG_FillCircle(300, 100, 10, 0xff0000);
+	UG_DrawFrame(400, 400, 440, 440, C_WHITE);
+	UG_FontSelect(&FONT_16X26);
+	UG_SetBackcolor(C_BLACK);
 	UG_SetForecolor(C_YELLOW);
- 	UG_PutString (200, 200, "hello form the other side\nthis is a new line hehehehehhehehehehehehe");
+	UG_PutString(200, 200, "hello form the other side\nthis is a new line hehehehehhehehehehehehe");
 
 	__asm__ __volatile__("SVC 0x05");
 
 	/* We also loop if main() returns. */
- 	for (;;)
+	for (;;)
 	    ;
 
 	return 0;
