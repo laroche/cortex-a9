@@ -19,8 +19,13 @@ _Reset:
 	b loop
 #endif
 	b loop			/* address exception */
+#if	CONFIG_ISR_ASM
+	b IRQHandler
+	b FIQHandler
+#else
 	b c_irq
 	b c_fiq
+#endif
 
 .text
 
@@ -60,6 +65,29 @@ stack_init_loop:
 	blo stack_init_loop
 #endif
 
+#if	CONFIG_ARM_NEON
+	mrc p15, 0, r0, c1, c1, 2	/* set NSACR bits 11:10 for access to CP10 and CP11 */
+	orr r0, r0, #0xc00
+	mcr p15, 0, r0, c1, c1, 2
+	mrc p15, 0, r0, c1, c0, 2	/* set CPACR for access to CP10 and CP11 */
+	orr r0, r0, #0xf00000
+	mcr p15, 0, r0, c1, c0, 2
+#if	0
+	fmrx r0, fpexc
+	orr r0, r0, #0x40000000
+	fmxr fpexc, r0
+#else
+	mov r0, #0x40000000		/* set FPEXC EN bit to enable the FPU */
+	vmsr fpexc, r0
+#endif
+#endif
+
+#if	0
+	mrc p15, 0, r0, c1, c0, 0	/* flow prediction enable */
+	orr r0, r0, #(0x01 << 11)
+	mcr p15, 0, r0, c1, c0, 0
+#endif
+
 #if	0
 	mrs r0, cpsr			/* enable asynchronous abort exception */
 	bic r0, r0, #0x100
@@ -86,9 +114,13 @@ stack_init_loop:
 	cps #0x10
 	ldr sp, =stackUSR
 
+	/* bl __libc_init_array */
+
 	/* mov r0, #0 */
 	/* mov r1, #0 */
 	bl main
+
+	/* bl __libc_fini_array */
 loop:
 	wfe				/* XXX wfi or wfe ??? */
 	b loop
@@ -100,6 +132,8 @@ loop:
 .global SWInterrupt
 .global PrefetchAbortInterrupt
 .global DataAbortInterrupt
+.global IRQInterrupt
+.global FIQInterrupt
 
 UndefinedHandler:
 	stmdb sp!, {r0-r3,r12,lr}
@@ -171,5 +205,66 @@ DataAbortHandler:
 
 	ldmia sp!, {r0-r3,r12,lr}
 	subs pc, lr, #8
+
+
+IRQHandler:
+	stmdb sp!, {r0-r3,r12,lr}
+
+#if	CONFIG_ARM_NEON
+	vpush {d0-d7}
+	vpush {d16-d31}
+	vmrs r1, fpscr
+	push {r1}
+	vmrs r1, fpexc
+	push {r1}
+#endif
+
+#if	CONFIG_PROFILING
+	ldr r2, =prof_pc
+	subs r3, lr, #0
+	str r3, [r2]
+#endif
+
+	bl IRQInterrupt
+
+#if	CONFIG_ARM_NEON
+	pop {r1}
+	vmsr fpexc, r1
+	pop {r1}
+	vmsr fpscr, r1
+	vpop {d16-d31}
+	vpop {d0-d7}
+#endif
+
+	ldmia sp!, {r0-r3,r12,lr}
+	subs pc, lr, #4
+
+
+FIQHandler:
+	stmdb sp!, {r0-r3,r12,lr}
+
+#if	CONFIG_ARM_NEON
+	vpush {d0-d7}
+	vpush {d16-d31}
+	vmrs r1, fpscr
+	push {r1}
+	vmrs r1, fpexc
+	push {r1}
+#endif
+
+	bl FIQInterrupt
+
+#if	CONFIG_ARM_NEON
+	pop {r1}
+	vmsr fpexc, r1
+	pop {r1}
+	vmsr fpscr, r1
+	vpop {d16-d31}
+	vpop {d0-d7}
+#endif
+
+	ldmia sp!, {r0-r3,r12,lr}
+	subs pc, lr, #4
+
 
 #endif

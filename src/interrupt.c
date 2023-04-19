@@ -21,12 +21,20 @@ void __attribute__ ((interrupt("SWI"))) c_svc (void)
 	printf("yaay SVC ticked\n");
 }
 
+#if CONFIG_ISR_ASM
+void FIQInterrupt (void)
+#else
 void __attribute__ ((interrupt("FIQ"))) c_fiq (void)
+#endif
 {
 	printf("yaay FIQ ticked\n");
 }
 
+#if CONFIG_ISR_ASM
+void IRQInterrupt (void)
+#else
 void __attribute__ ((interrupt("IRQ"))) c_irq (void)
+#endif
 {
 	int irq_num;
 

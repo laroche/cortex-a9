@@ -28,6 +28,11 @@ LFLAGS += -Wl,--gc-sections
 
 CFLAGS += -DDEBUG
 
+# Floating Point:
+#CFLAGS += -mfpu=neon
+#CFLAGS += -mfpu=neon-vfpv3
+#-mfloat-abi=soft hard
+
 QEMU = qemu-system-arm
 QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors,unimp
 # -d int
