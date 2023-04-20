@@ -1,34 +1,25 @@
 #include "cortex_config.h"
 
+#if	CONFIG_ISR_ASM
+
 .section .isr_vector, "x"
+
 .global _Reset
 _Reset:
 	b ResetHandler
-#if	CONFIG_ISR_ASM
-	b UndefinedHandler
+	b UndefinedHandler	/* undefined instruction */
 	b SVCHandler
-#else
-	b loop			/* undefined instruction */
-	b c_svc			/* swi, svc */
-#endif
-#if	CONFIG_ISR_ASM
 	b PrefetchAbortHandler
 	b DataAbortHandler
-#else
-	b loop
-	b loop
-#endif
-	b loop			/* address exception */
-#if	CONFIG_ISR_ASM
+	b LoopHandler		/* address exception */
 	b IRQHandler
 	b FIQHandler
-#else
-	b c_irq
-	b c_fiq
+
 #endif
 
 .text
 
+.global ResetHandler
 ResetHandler:
 
 #if	CONFIG_SMP
@@ -36,7 +27,7 @@ ResetHandler:
 	mrc p15, #0, r1, c0, c0, #5
 	and r1, r1, #3
 	cmp r1, #0
-	bne loop
+	bne LoopHandler
 #endif
 
 	/* set VBAR to vector address table */
@@ -121,9 +112,11 @@ stack_init_loop:
 	bl main
 
 	/* bl __libc_fini_array */
-loop:
+
+.global LoopHandler
+LoopHandler:
 	wfe				/* XXX wfi or wfe ??? */
-	b loop
+	b LoopHandler
 
 
 #if	CONFIG_ISR_ASM
@@ -175,10 +168,14 @@ SVCHandler:				/* SWI handler */
 	movs pc, lr
 
 
-PrefetchAbortHandler:
-#if	CONFIG_ARM_ERRATA_775420
-	dsb
+#if CONFIG_ARM_ERRATA_775420
+#define arm_errata_775420	 dsb
+#else
+#define arm_errata_775420
 #endif
+
+PrefetchAbortHandler:
+	arm_errata_775420
 	stmdb sp!, {r0-r3,r12,lr}
 
 	ldr r0, =PrefetchAbortAddr	/* Store instruction causing prefetch abort */
@@ -192,9 +189,7 @@ PrefetchAbortHandler:
 
 
 DataAbortHandler:
-#if	CONFIG_ARM_ERRATA_775420
-	dsb
-#endif
+	arm_errata_775420
 	stmdb sp!, {r0-r3,r12,lr}
 
 	ldr r0, =DataAbortAddr		/* Store instruction causing data abort */
@@ -211,7 +206,7 @@ IRQHandler:
 	stmdb sp!, {r0-r3,r12,lr}
 
 #if	CONFIG_ARM_NEON
-	vpush {d0-d7}
+	vpush {d0-d15}
 	vpush {d16-d31}
 	vmrs r1, fpscr
 	push {r1}
@@ -233,7 +228,7 @@ IRQHandler:
 	pop {r1}
 	vmsr fpscr, r1
 	vpop {d16-d31}
-	vpop {d0-d7}
+	vpop {d0-d15}
 #endif
 
 	ldmia sp!, {r0-r3,r12,lr}
@@ -244,7 +239,7 @@ FIQHandler:
 	stmdb sp!, {r0-r3,r12,lr}
 
 #if	CONFIG_ARM_NEON
-	vpush {d0-d7}
+	vpush {d0-d15}
 	vpush {d16-d31}
 	vmrs r1, fpscr
 	push {r1}
@@ -260,7 +255,7 @@ FIQHandler:
 	pop {r1}
 	vmsr fpscr, r1
 	vpop {d16-d31}
-	vpop {d0-d7}
+	vpop {d0-d15}
 #endif
 
 	ldmia sp!, {r0-r3,r12,lr}

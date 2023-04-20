@@ -24,7 +24,7 @@ int main (void)
 	UG_SetForecolor(C_YELLOW);
 	UG_PutString(200, 200, "hello form the other side\nthis is a new line hehehehehhehehehehehehe");
 
-	__asm__ __volatile__("SVC 0x05");
+	__asm__ __volatile__("svc 0x05");
 
 	/* We also loop if main() returns. */
 	for (;;)

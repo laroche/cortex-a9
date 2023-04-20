@@ -1,6 +1,7 @@
 #define CONFIG_SMP 1
-#if __VFP_FP__
-#define CONFIG_ARM_NEON 0
+/* XXX #if __VFP_FP__ */
+#ifdef __ARM_FP
+#define CONFIG_ARM_NEON 1
 #else
 #define CONFIG_ARM_NEON 0
 #endif
@@ -13,5 +14,5 @@
 #endif
 #define CONFIG_PROFILING 0
 
-#define CONFIG_ISR_ASM 1
+#define CONFIG_ISR_ASM 0
 #define CONFIG_ARM_ERRATA_775420 0
