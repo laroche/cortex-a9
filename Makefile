@@ -5,7 +5,7 @@ BINDIR = bin
 KERNEL = $(BINDIR)/kernel.elf
 CORE = cortex-a9
 
-TOOLCHAIN = arm-none-eabi-
+TOOLCHAIN ?= arm-none-eabi-
 CC = $(TOOLCHAIN)gcc
 SIZE = $(TOOLCHAIN)size
 OBJDUMP = $(TOOLCHAIN)objdump
@@ -30,8 +30,6 @@ CFLAGS += -DDEBUG
 
 # Floating Point:
 #CFLAGS += -mfpu=neon
-#CFLAGS += -mfpu=neon-vfpv3
-#-mfloat-abi=soft hard
 
 QEMU = qemu-system-arm
 QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors,unimp
