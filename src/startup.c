@@ -158,14 +158,7 @@ static void __attribute__ ((interrupt("ABORT"),noreturn)) PrefetchAbortHandler (
 
 #ifdef DEBUG
 	{
-		uint32_t PrefetchAbortAddr, FaultStatus;
-
-#ifdef __GNUC__
-		/* Store instruction causing prefetch abort */
-		__asm__ __volatile__("sub %0, lr, #4" : "=r" (PrefetchAbortAddr));
-#else
-		#error "Unsupported compiler."
-#endif
+		uint32_t FaultStatus, PrefetchAbortAddr;
 
 #ifdef __GNUC__
 		__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 1" : "=r" (FaultStatus));
@@ -176,6 +169,13 @@ static void __attribute__ ((interrupt("ABORT"),noreturn)) PrefetchAbortHandler (
 		FaultStatus = Reg;
 #endif
 		printf("Prefetch abort with Instruction Fault Status Register %lx\n", FaultStatus);
+
+#ifdef __GNUC__
+		/* Store instruction causing prefetch abort */
+		__asm__ __volatile__("sub %0, lr, #4" : "=r" (PrefetchAbortAddr));
+#else
+		#error "Unsupported compiler."
+#endif
 		printf("Prefetch abort at instruction address %lx\n", PrefetchAbortAddr);
 	}
 #endif
@@ -190,14 +190,7 @@ static void __attribute__ ((interrupt("ABORT"),noreturn)) DataAbortHandler (void
 
 #ifdef DEBUG
 	{
-		uint32_t DataAbortAddr, FaultStatus;
-
-#ifdef __GNUC__
-		/* Store instruction causing data abort */
-		__asm__ __volatile__("sub %0, lr, #8" : "=r" (DataAbortAddr));
-#else
-		#error "Unsupported compiler."
-#endif
+		uint32_t FaultStatus, DataAbortAddr;
 
 #ifdef __GNUC__
 		__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 0" : "=r" (FaultStatus));
@@ -208,6 +201,13 @@ static void __attribute__ ((interrupt("ABORT"),noreturn)) DataAbortHandler (void
 		FaultStatus = Reg;
 #endif
 		printf("Data abort with Data Fault Status Register %lx\n", FaultStatus);
+
+#ifdef __GNUC__
+		/* Store instruction causing data abort */
+		__asm__ __volatile__("sub %0, lr, #8" : "=r" (DataAbortAddr));
+#else
+		#error "Unsupported compiler."
+#endif
 		printf("Data abort at instruction address %lx\n", DataAbortAddr);
 	}
 #endif
