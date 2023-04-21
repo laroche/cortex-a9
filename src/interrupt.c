@@ -24,7 +24,25 @@ void SWInterrupt (void)
 void __attribute__ ((interrupt("SWI"),used)) SVCHandler (void)
 #endif
 {
+#if     0
+	mov r1, sp
+	mrs r0, spsr
+	push {r0,r3}
+	tst r0, #0x20                   /* check T bit for ARM or Thumb mode */
+	ldrneh r0, [lr,#-2]             /* Thumb mode */
+	bicne r0, r0, #0xff00           /* Thumb mode */
+	ldreq r0, [lr,#-4]              /* ARM mode */
+	biceq r0, r0, #0xff000000       /* ARM mode */
+	/* r0 now contains SVC number */
+	/* r1 now contains pointer to stacked registers */
+#endif
+
 	printf("yaay SVC ticked\n");
+
+#if     0
+	pop {r0,r3}
+	msr spsr_cf, r0
+#endif
 }
 
 #if ! CONFIG_ISR_ASM && CONFIG_ARM_ERRATA_775420
@@ -107,6 +125,12 @@ void __attribute__ ((noreturn)) UndefinedException (void)
 void __attribute__ ((interrupt("UNDEF"),noreturn,used)) UndefinedHandler (void)
 #endif
 {
+#if	0
+	ldr r0, =UndefinedExceptionAddr /* Store instruction causing undefined exception */
+	sub r1, lr, #4
+	str r1, [r0]
+#endif
+
 #ifdef DEBUG
 	printf("Undefined instruction at address %lx\n", UndefinedExceptionAddr);
 #endif
@@ -121,6 +145,12 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) PrefetchAbortHandler (vo
 #endif
 {
 	arm_errata_775420();
+
+#if	0
+        ldr r0, =PrefetchAbortAddr      /* Store instruction causing prefetch abort */
+        sub r1, lr, #4
+        str r1, [r0]
+#endif
 
 #ifdef DEBUG
 	{
@@ -149,6 +179,12 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) DataAbortHandler (void)
 #endif
 {
 	arm_errata_775420();
+
+#if	0
+	ldr r0, =DataAbortAddr          /* Store instruction causing data abort */
+	sub r1, lr, #8
+	str r1, [r0]
+#endif
 
 #ifdef DEBUG
 	{
