@@ -15,8 +15,6 @@ _Reset:
 	b IRQHandler
 	b FIQHandler
 
-#endif
-
 .text
 
 .global ResetHandler
@@ -113,13 +111,12 @@ stack_init_loop:
 
 	/* bl __libc_fini_array */
 
+
 .global LoopHandler
 LoopHandler:
 	wfe				/* XXX wfi or wfe ??? */
 	b LoopHandler
 
-
-#if	CONFIG_ISR_ASM
 
 .global UndefinedException
 .global SWInterrupt

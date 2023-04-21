@@ -184,6 +184,120 @@ void __attribute__ ((section(".isr_vector"),naked,used)) _Reset (void)
 		"b FIQHandler\n"
 	);
 }
+
+void __attribute__ ((naked,used)) ResetHandler (void)
+{
+#if	CONFIG_SMP
+	/* only cpu0 continues, all others loop */
+	__asm__ __volatile__(
+		"mrc p15, #0, r1, c0, c0, #5\n"
+		"and r1, r1, #3\n"
+		"cmp r1, #0\n"
+		"bne LoopHandler\n");
+#endif
+
+	/* set VBAR to vector address table */
+	__asm__ __volatile__(
+		"ldr r0, =0x60000000\n"
+		"mcr p15, 0, r0, c12, c0, 0\n");
+
+	/* CPU boots into SVC/Supervisor Mode 0x13: */
+	__asm__ __volatile__("ldr sp, =stackSVC");
+
+	/* Clear BSS */
+	__asm__ __volatile__(
+		"ldr r0, =__bss_start\n"
+		"ldr r1, =end\n"
+		"mov r2, #0\n"
+	"bss_clear_loop:\n"
+		"cmp r0, r1\n"
+		"strlo r2, [r0], #4\n"
+		"blo bss_clear_loop\n");
+
+#if	CONFIG_STACK_INIT
+	__asm__ __volatile__(
+		"ldr r0, =__stack_start\n"
+		"ldr r1, =__stack_end\n"
+		"movw r2, #0xbeef\n"
+		"movt r2, #0xdead\n"
+	"stack_init_loop:\n"
+		"cmp r0, r1\n"
+		"strlo r2, [r0], #4\n"
+		"blo stack_init_loop\n");
+#endif
+
+#if	CONFIG_ARM_NEON
+	__asm__ __volatile__(
+		"mrc p15, 0, r0, c1, c1, 2\n"	/* set NSACR bits 11:10 for access to CP10 and CP11 */
+		"orr r0, r0, #0xc00\n"
+		"mcr p15, 0, r0, c1, c1, 2\n"
+		"mrc p15, 0, r0, c1, c0, 2\n"	/* set CPACR for access to CP10 and CP11 */
+		"orr r0, r0, #0xf00000\n"
+		"mcr p15, 0, r0, c1, c0, 2\n"
+#if	0
+		fmrx r0, fpexc
+		orr r0, r0, #0x40000000
+		fmxr fpexc, r0
+#else
+		"mov r0, #0x40000000\n"		/* set FPEXC EN bit to enable the FPU */
+		"vmsr fpexc, r0\n");
+#endif
+#endif
+
+#if	0
+		mrc p15, 0, r0, c1, c0, 0	/* flow prediction enable */
+		orr r0, r0, #(0x01 << 11)
+		mcr p15, 0, r0, c1, c0, 0
+#endif
+
+#if	0
+		mrs r0, cpsr			/* enable asynchronous abort exception */
+		bic r0, r0, #0x100
+		msr cpsr_xsf, r0
+#endif
+
+	__asm__ __volatile__(
+		"cps #0x1b\n"
+		"ldr sp, =stackUND\n"
+
+		"cps #0x17\n"
+		"ldr sp, =stackABT\n"
+
+		"cps #0x12\n"
+		"ldr sp, =stackIRQ\n"
+
+		"cps #0x11\n"
+		"ldr sp, =stackFIQ\n"
+
+		/* cps #0x1f */
+		/* ldr sp, =stackSYS */
+
+		"cpsie if\n"
+
+		"cps #0x10\n"
+		"ldr sp, =stackUSR\n"
+
+		/* bl __libc_init_array */
+
+		/* mov r0, #0 */
+		/* mov r1, #0 */
+		"bl main\n"
+
+		/* bl __libc_fini_array */
+
+	"loop1:\n"
+		"wfe\n"				/* XXX wfi or wfe ??? */
+		"b loop1\n");
+}
+
+void __attribute__ ((naked,used)) LoopHandler (void)
+{
+	__asm__ __volatile__(
+		"loop:\n"
+		"wfe\n"			/* XXX wfi or wfe ??? */
+		"b loop\n"
+	);
+}
 #endif
 
 void enable_irq (IRQn_Type irq_num)
