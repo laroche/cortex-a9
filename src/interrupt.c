@@ -296,9 +296,7 @@ void __attribute__ ((naked,used)) ResetHandler (void)
 
 		/* bl __libc_fini_array */
 
-	"loop1:\n"
-		"wfe\n"				/* XXX wfi or wfe ??? */
-		"b loop1\n");
+		"b LoopHandler\n");
 }
 
 void __attribute__ ((naked,used)) LoopHandler (void)
