@@ -103,19 +103,15 @@ void __attribute__ ((interrupt("IRQ"),used)) IRQHandler (void)
 	restore_fpu();
 }
 
-uint32_t UndefinedExceptionAddr;
-uint32_t PrefetchAbortAddr;
-uint32_t DataAbortAddr;
 
 void __attribute__ ((interrupt("UNDEF"),noreturn,used)) UndefinedHandler (void)
 {
-#if	0
-	ldr r0, =UndefinedExceptionAddr /* Store instruction causing undefined exception */
-	sub r1, lr, #4
-	str r1, [r0]
-#endif
-
 #ifdef DEBUG
+	uint32_t UndefinedExceptionAddr;
+
+	/* Store instruction causing undefined exception */
+	__asm__ __volatile__("sub %0, lr, #4" : "=r" (UndefinedExceptionAddr));
+
 	printf("Undefined instruction at address %lx\n", UndefinedExceptionAddr);
 #endif
 	while(1) {
@@ -126,15 +122,17 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) PrefetchAbortHandler (vo
 {
 	arm_errata_775420();
 
-#if	0
-        ldr r0, =PrefetchAbortAddr      /* Store instruction causing prefetch abort */
-        sub r1, lr, #4
-        str r1, [r0]
-#endif
-
 #ifdef DEBUG
 	{
-		uint32_t FaultStatus;
+		uint32_t PrefetchAbortAddr, FaultStatus;
+
+#ifdef __GNUC__
+		/* Store instruction causing prefetch abort */
+		__asm__ __volatile__("sub %0, lr, #4" : "=r" (PrefetchAbortAddr));
+#else
+		#error "Unsupported compiler."
+#endif
+
 #ifdef __GNUC__
 		__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 1" : "=r" (FaultStatus));
 #elif defined (__ICCARM__)
@@ -156,15 +154,17 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) DataAbortHandler (void)
 {
 	arm_errata_775420();
 
-#if	0
-	ldr r0, =DataAbortAddr          /* Store instruction causing data abort */
-	sub r1, lr, #8
-	str r1, [r0]
-#endif
-
 #ifdef DEBUG
 	{
-		uint32_t FaultStatus;
+		uint32_t DataAbortAddr, FaultStatus;
+
+#ifdef __GNUC__
+		/* Store instruction causing data abort */
+		__asm__ __volatile__("sub %0, lr, #8" : "=r" (DataAbortAddr));
+#else
+		#error "Unsupported compiler."
+#endif
+
 #ifdef __GNUC__
 		__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 0" : "=r" (FaultStatus));
 #elif defined (__ICCARM__)
