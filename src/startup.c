@@ -3,7 +3,7 @@
 #include "interrupt.h"
 #include "startup.h"
 
-/* First code to execute on startup.
+/* First code to execute on startup (via first entry in VectorTable).
  * CPU boots into SVC/Supervisor Mode 0x13.
  */
 static void __attribute__ ((naked)) ResetHandler (void)
