@@ -18,11 +18,7 @@ void install_isr (IRQn_Type irq_num, func_t handler)
 	}
 }
 
-#if CONFIG_ISR_ASM
-void SWInterrupt (void)
-#else
 void __attribute__ ((interrupt("SWI"),used)) SVCHandler (void)
-#endif
 {
 #if     0
 	mov r1, sp
@@ -45,17 +41,14 @@ void __attribute__ ((interrupt("SWI"),used)) SVCHandler (void)
 #endif
 }
 
-#if ! CONFIG_ISR_ASM && CONFIG_ARM_ERRATA_775420
+#if CONFIG_ARM_ERRATA_775420
 #define dsb() __asm__ __volatile__("dsb" : : : "memory")
 #define arm_errata_775420() dsb()
 #else
 #define arm_errata_775420() do {} while (0)
 #endif
 
-#if CONFIG_ISR_ASM || ! CONFIG_ARM_NEON
-#define save_fpu() do {} while (0)
-#define restore_fpu() do {} while (0)
-#else
+#if CONFIG_ARM_NEON
 #define save_fpu() \
   __asm__ __volatile__( \
 	"vpush {d0-d15}\n" \
@@ -74,13 +67,12 @@ void __attribute__ ((interrupt("SWI"),used)) SVCHandler (void)
 	"vpop {d16-d31}\n" \
 	"vpop {d0-d15}\n" \
   )
+#else
+#define save_fpu() do {} while (0)
+#define restore_fpu() do {} while (0)
 #endif
 
-#if CONFIG_ISR_ASM
-void FIQInterrupt (void)
-#else
 void __attribute__ ((interrupt("FIQ"),used)) FIQHandler (void)
-#endif
 {
 	save_fpu();
 
@@ -89,11 +81,7 @@ void __attribute__ ((interrupt("FIQ"),used)) FIQHandler (void)
 	restore_fpu();
 }
 
-#if CONFIG_ISR_ASM
-void IRQInterrupt (void)
-#else
 void __attribute__ ((interrupt("IRQ"),used)) IRQHandler (void)
-#endif
 {
 	int irq_num;
 
@@ -119,11 +107,7 @@ uint32_t UndefinedExceptionAddr;
 uint32_t PrefetchAbortAddr;
 uint32_t DataAbortAddr;
 
-#if CONFIG_ISR_ASM
-void __attribute__ ((noreturn)) UndefinedException (void)
-#else
 void __attribute__ ((interrupt("UNDEF"),noreturn,used)) UndefinedHandler (void)
-#endif
 {
 #if	0
 	ldr r0, =UndefinedExceptionAddr /* Store instruction causing undefined exception */
@@ -138,11 +122,7 @@ void __attribute__ ((interrupt("UNDEF"),noreturn,used)) UndefinedHandler (void)
 	}
 }
 
-#if CONFIG_ISR_ASM
-void __attribute__ ((noreturn)) PrefetchAbortInterrupt (void)
-#else
 void __attribute__ ((interrupt("ABORT"),noreturn,used)) PrefetchAbortHandler (void)
-#endif
 {
 	arm_errata_775420();
 
@@ -172,11 +152,7 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) PrefetchAbortHandler (vo
 	}
 }
 
-#if CONFIG_ISR_ASM
-void __attribute__ ((noreturn)) DataAbortInterrupt (void)
-#else
 void __attribute__ ((interrupt("ABORT"),noreturn,used)) DataAbortHandler (void)
-#endif
 {
 	arm_errata_775420();
 
@@ -206,7 +182,6 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) DataAbortHandler (void)
 	}
 }
 
-#if ! CONFIG_ISR_ASM
 void __attribute__ ((section(".isr_vector"),naked,used)) _Reset (void)
 {
 	__asm__ __volatile__(
@@ -334,7 +309,6 @@ void __attribute__ ((naked,used)) LoopHandler (void)
 		"b loop\n"
 	);
 }
-#endif
 
 void enable_irq (IRQn_Type irq_num)
 {

@@ -36,10 +36,7 @@ QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors,unimp
 # -d int
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
-AS_FILES := $(wildcard $(SRCDIR)/*.S)
-OBJECTS_C := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
-OBJECTS_S := $(addprefix $(OBJDIR)/,$(notdir $(AS_FILES:.S=.o)))
-OBJECTS_ALL := $(OBJECTS_S) $(OBJECTS_C)
+OBJECTS_ALL := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
 
 # Detect Windows with two possible ways. On Linux start parallel builds:
 ifeq ($(OS),Windows_NT)
@@ -71,9 +68,6 @@ $(OBJDIR):
 	mkdir -p $@
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJDIR)/%.o : $(SRCDIR)/%.S
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY: all qemu dqemu run gdb clean
