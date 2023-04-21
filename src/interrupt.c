@@ -294,7 +294,7 @@ static void __attribute__ ((naked)) LoopHandler (void)
 	);
 }
 
-void __attribute__ ((section(".isr_vector"),naked,used)) _Reset (void)
+void __attribute__ ((section(".isr_vector"),naked,used)) VectorTable (void)
 {
 	__asm__ __volatile__("b ResetHandler" : : "X" (&ResetHandler));
 	__asm__ __volatile__("b UndefinedHandler" : : "X" (&UndefinedHandler));

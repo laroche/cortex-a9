@@ -10,6 +10,6 @@ void install_isr(IRQn_Type irq_num, func_t handler);
 void enable_irq(IRQn_Type irq_num);
 
 int main (void);
-void __attribute__ ((section(".isr_vector"),naked,used)) _Reset (void);
+void __attribute__ ((section(".isr_vector"),naked,used)) VectorTable (void);
 
 #endif

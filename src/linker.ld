@@ -1,4 +1,4 @@
-ENTRY(_Reset)
+ENTRY(VectorTable)
 
 MEMORY
 {
