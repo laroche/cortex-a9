@@ -1,7 +1,6 @@
 ENTRY(VectorTable)
 
-MEMORY
-{
+MEMORY {
     RAM (xrw) : ORIGIN = 0x60000000, LENGTH = 32M
 }
 
@@ -9,8 +8,7 @@ heap_size = 0x10000; /* 64K */
 
 SECTIONS {
     /* . = ORIGIN(RAM) + 0x10000; */
-    .text :
-    {
+    .text : {
         . = ALIGN(4);
         KEEP(*(.isr_vector))
         _start_text = .;
@@ -38,14 +36,12 @@ SECTIONS {
         KEEP(*(.eh_frame*))
     } >RAM
 
-    .ARM.extab :
-    {
+    .ARM.extab : {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
     } >RAM
 
     __exidx_start = .;
-    .ARM.exidx :
-    {
+    .ARM.exidx : {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
     } >RAM
     __exidx_end = .;
@@ -53,8 +49,7 @@ SECTIONS {
     . = ALIGN(4);
     _end_text = .;
 
-    .data :
-    {
+    .data : {
         _start_data = .;
         *(vtable)
         *(.data)
@@ -86,8 +81,7 @@ SECTIONS {
     } >RAM
 
     . = ALIGN(4);
-    .bss :
-    {
+    .bss : {
         __bss_start = .;
         *(.bss)
         *(.bss*)
@@ -96,8 +90,7 @@ SECTIONS {
     } >RAM
 
     . = ALIGN(4);
-    .heap :
-    {
+    .heap : {
         __end__ = .;
         /* "end" is used by newlib's syscalls!!! */
         PROVIDE(end = .);
