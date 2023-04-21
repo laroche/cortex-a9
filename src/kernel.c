@@ -6,7 +6,7 @@
 #include "sp804.h"
 #include "interrupt.h"
 
-int __attribute__ ((used)) main (void)
+int main (void)
 {
 	interrupt_init();
 	clcd_init();

@@ -18,7 +18,7 @@ void install_isr (IRQn_Type irq_num, func_t handler)
 	}
 }
 
-void __attribute__ ((interrupt("SWI"),used)) SVCHandler (void)
+static void __attribute__ ((interrupt("SWI"))) SVCHandler (void)
 {
 #if     0
 	mov r1, sp
@@ -72,7 +72,7 @@ void __attribute__ ((interrupt("SWI"),used)) SVCHandler (void)
 #define restore_fpu() do {} while (0)
 #endif
 
-void __attribute__ ((interrupt("FIQ"),used)) FIQHandler (void)
+static void __attribute__ ((interrupt("FIQ"))) FIQHandler (void)
 {
 	save_fpu();
 
@@ -81,7 +81,7 @@ void __attribute__ ((interrupt("FIQ"),used)) FIQHandler (void)
 	restore_fpu();
 }
 
-void __attribute__ ((interrupt("IRQ"),used)) IRQHandler (void)
+static void __attribute__ ((interrupt("IRQ"))) IRQHandler (void)
 {
 	int irq_num;
 
@@ -104,7 +104,7 @@ void __attribute__ ((interrupt("IRQ"),used)) IRQHandler (void)
 }
 
 
-void __attribute__ ((interrupt("UNDEF"),noreturn,used)) UndefinedHandler (void)
+static void __attribute__ ((interrupt("UNDEF"),noreturn)) UndefinedHandler (void)
 {
 #ifdef DEBUG
 	uint32_t UndefinedExceptionAddr;
@@ -118,7 +118,7 @@ void __attribute__ ((interrupt("UNDEF"),noreturn,used)) UndefinedHandler (void)
 	}
 }
 
-void __attribute__ ((interrupt("ABORT"),noreturn,used)) PrefetchAbortHandler (void)
+static void __attribute__ ((interrupt("ABORT"),noreturn)) PrefetchAbortHandler (void)
 {
 	arm_errata_775420();
 
@@ -150,7 +150,7 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) PrefetchAbortHandler (vo
 	}
 }
 
-void __attribute__ ((interrupt("ABORT"),noreturn,used)) DataAbortHandler (void)
+static void __attribute__ ((interrupt("ABORT"),noreturn)) DataAbortHandler (void)
 {
 	arm_errata_775420();
 
@@ -182,21 +182,7 @@ void __attribute__ ((interrupt("ABORT"),noreturn,used)) DataAbortHandler (void)
 	}
 }
 
-void __attribute__ ((section(".isr_vector"),naked,used)) _Reset (void)
-{
-	__asm__ __volatile__(
-		"b ResetHandler\n"
-		"b UndefinedHandler\n"
-		"b SVCHandler\n"
-		"b PrefetchAbortHandler\n"
-		"b DataAbortHandler\n"
-		"b LoopHandler\n"
-		"b IRQHandler\n"
-		"b FIQHandler\n"
-	);
-}
-
-void __attribute__ ((naked,used)) ResetHandler (void)
+static void __attribute__ ((naked)) ResetHandler (void)
 {
 #if	CONFIG_SMP
 	/* only cpu0 continues, all others loop */
@@ -296,10 +282,10 @@ void __attribute__ ((naked,used)) ResetHandler (void)
 
 		/* bl __libc_fini_array */
 
-		"b LoopHandler\n");
+		"b LoopHandler\n" : : "X" (&main));
 }
 
-void __attribute__ ((naked,used)) LoopHandler (void)
+static void __attribute__ ((naked)) LoopHandler (void)
 {
 	__asm__ __volatile__(
 		"loop:\n"
@@ -307,6 +293,19 @@ void __attribute__ ((naked,used)) LoopHandler (void)
 		"b loop\n"
 	);
 }
+
+void __attribute__ ((section(".isr_vector"),naked,used)) _Reset (void)
+{
+	__asm__ __volatile__("b ResetHandler" : : "X" (&ResetHandler));
+	__asm__ __volatile__("b UndefinedHandler" : : "X" (&UndefinedHandler));
+	__asm__ __volatile__("b SVCHandler" : : "X" (&SVCHandler));
+	__asm__ __volatile__("b PrefetchAbortHandler" : : "X" (&PrefetchAbortHandler));
+	__asm__ __volatile__("b DataAbortHandler" : : "X" (&DataAbortHandler));
+	__asm__ __volatile__("b LoopHandler" : : "X" (&LoopHandler));
+	__asm__ __volatile__("b IRQHandler" : : "X" (&IRQHandler));
+	__asm__ __volatile__("b FIQHandler" : : "X" (&FIQHandler));
+}
+
 
 void enable_irq (IRQn_Type irq_num)
 {
