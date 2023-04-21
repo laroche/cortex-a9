@@ -12,6 +12,5 @@
 #else
 #define CONFIG_STACK_INIT 0
 #endif
-#define CONFIG_PROFILING 0
 
 #define CONFIG_ARM_ERRATA_775420 0
