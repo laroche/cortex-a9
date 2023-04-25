@@ -2,6 +2,7 @@
 #include "cortex_config.h"
 #include "interrupt.h"
 #include "startup.h"
+#include "pl011.h"
 
 /* First code to execute on startup (via first entry in VectorTable).
  * CPU boots into SVC/Supervisor Mode 0x13.
@@ -22,6 +23,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 		"ldr r0, =0x60000000\n"
 		"mcr p15, 0, r0, c12, c0, 0\n");
 
+	/* setup SVC stack */
 	__asm__ __volatile__("ldr sp, =stackSVC");
 
 	/* Clear BSS */
@@ -35,6 +37,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 		"blo bss_clear_loop\n");
 
 #if	CONFIG_STACK_INIT
+	/* initialize all stacks to a known value */
 	__asm__ __volatile__(
 		"ldr r0, =__stack_start\n"
 		"ldr r1, =__stack_end\n"
@@ -47,6 +50,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 #endif
 
 #if	CONFIG_ARM_NEON
+	/* initialize floating point unit (fpu) co10 and cp11 */
 	__asm__ __volatile__(
 		"mrc p15, 0, r0, c1, c1, 2\n"	/* set NSACR bits 11:10 for access to CP10 and CP11 */
 		"orr r0, r0, #0xc00\n"
@@ -76,6 +80,9 @@ static void __attribute__ ((naked)) ResetHandler (void)
 		msr cpsr_xsf, r0
 #endif
 
+	/* Set stack pointer for different modes.
+	 * Enable interrupts.
+	 * In user mode call main(). */
 	__asm__ __volatile__(
 		"cps #0x1b\n"
 		"ldr sp, =stackUND\n"
@@ -97,34 +104,38 @@ static void __attribute__ ((naked)) ResetHandler (void)
 		"cps #0x10\n"
 		"ldr sp, =stackUSR\n"
 
-		/* bl __libc_init_array */
+		"bl __libc_init_array\n"
 
 		/* mov r0, #0 */
 		/* mov r1, #0 */
 		"bl main\n"
 
-		/* bl __libc_fini_array */
+		"bl __libc_fini_array\n"
 
 		"b LoopHandler\n" : : "X" (&main));
 }
 
 static void __attribute__ ((interrupt("UNDEF"),noreturn)) UndefinedHandler (void)
 {
-#ifdef DEBUG
 	uint32_t UndefinedExceptionAddr;
 
+	uart_puts("Undefined instruction at address 0x");
+#ifdef	__GNUC__
 	/* Store instruction causing undefined exception */
 	__asm__ __volatile__("sub %0, lr, #4" : "=r" (UndefinedExceptionAddr));
-
-	printf("Undefined instruction at address %lx\n", UndefinedExceptionAddr);
+#else
+	#error "Unsupported compiler."
 #endif
-	while(1) {
-	}
+	uart_print_hex(UndefinedExceptionAddr);
+	uart_puts(".\n");
+
+	LoopHandler();
 }
 
 static void __attribute__ ((interrupt("SWI"))) SVCHandler (void)
 {
 #if     0
+	/* Record SVC number called and pointer to saved register on the stack. */
 	mov r1, sp
 	mrs r0, spsr
 	push {r0,r3}
@@ -137,7 +148,7 @@ static void __attribute__ ((interrupt("SWI"))) SVCHandler (void)
 	/* r1 now contains pointer to stacked registers */
 #endif
 
-	printf("yaay SVC ticked\n");
+	uart_puts("yaay SVC ticked\n");
 
 #if     0
 	pop {r0,r3}
@@ -154,69 +165,67 @@ static void __attribute__ ((interrupt("SWI"))) SVCHandler (void)
 
 static void __attribute__ ((interrupt("ABORT"),noreturn)) PrefetchAbortHandler (void)
 {
+	uint32_t FaultStatus, PrefetchAbortAddr;
+
 	arm_errata_775420();
 
-#ifdef DEBUG
-	{
-		uint32_t FaultStatus, PrefetchAbortAddr;
-
+	uart_puts("Prefetch abort with Instruction Fault Status Register 0x");
 #ifdef __GNUC__
-		__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 1" : "=r" (FaultStatus));
+	__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 1" : "=r" (FaultStatus));
 #elif defined (__ICCARM__)
-		mfcp(XREG_CP15_INST_FAULT_STATUS, FaultStatus);
+	mfcp(XREG_CP15_INST_FAULT_STATUS, FaultStatus);
 #else
-		volatile register uint32_t Reg __asm(XREG_CP15_INST_FAULT_STATUS);
-		FaultStatus = Reg;
+	volatile register uint32_t Reg __asm(XREG_CP15_INST_FAULT_STATUS);
+	FaultStatus = Reg;
 #endif
-		printf("Prefetch abort with Instruction Fault Status Register %lx\n", FaultStatus);
+	uart_print_hex(FaultStatus);
+	uart_puts(".\n");
 
+	uart_puts("Prefetch abort at instruction address 0x");
 #ifdef __GNUC__
-		/* Store instruction causing prefetch abort */
-		__asm__ __volatile__("sub %0, lr, #4" : "=r" (PrefetchAbortAddr));
+	/* Store instruction causing prefetch abort */
+	__asm__ __volatile__("sub %0, lr, #4" : "=r" (PrefetchAbortAddr));
 #else
-		#error "Unsupported compiler."
+	#error "Unsupported compiler."
 #endif
-		printf("Prefetch abort at instruction address %lx\n", PrefetchAbortAddr);
-	}
-#endif
+	uart_print_hex(PrefetchAbortAddr);
+	uart_puts(".\n");
 
-	while (1) {
-	}
+	LoopHandler();
 }
 
 static void __attribute__ ((interrupt("ABORT"),noreturn)) DataAbortHandler (void)
 {
+	uint32_t FaultStatus, DataAbortAddr;
+
 	arm_errata_775420();
 
-#ifdef DEBUG
-	{
-		uint32_t FaultStatus, DataAbortAddr;
-
+	uart_puts("Data abort with Data Fault Status Register 0x");
 #ifdef __GNUC__
-		__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 0" : "=r" (FaultStatus));
+	__asm__ __volatile__("mrc p15, 0, %0, c5, c0, 0" : "=r" (FaultStatus));
 #elif defined (__ICCARM__)
-		mfcp(XREG_CP15_DATA_FAULT_STATUS, FaultStatus);
+	mfcp(XREG_CP15_DATA_FAULT_STATUS, FaultStatus);
 #else
-		volatile register uint32_t Reg __asm(XREG_CP15_DATA_FAULT_STATUS);
-		FaultStatus = Reg;
+	volatile register uint32_t Reg __asm(XREG_CP15_DATA_FAULT_STATUS);
+	FaultStatus = Reg;
 #endif
-		printf("Data abort with Data Fault Status Register %lx\n", FaultStatus);
+	uart_print_hex(FaultStatus);
+	uart_puts(".\n");
 
+	uart_puts("Data abort at instruction address 0x");
 #ifdef __GNUC__
-		/* Store instruction causing data abort */
-		__asm__ __volatile__("sub %0, lr, #8" : "=r" (DataAbortAddr));
+	/* Store instruction causing data abort */
+	__asm__ __volatile__("sub %0, lr, #8" : "=r" (DataAbortAddr));
 #else
-		#error "Unsupported compiler."
+	#error "Unsupported compiler."
 #endif
-		printf("Data abort at instruction address %lx\n", DataAbortAddr);
-	}
-#endif
+	uart_print_hex(DataAbortAddr);
+	uart_puts(".\n");
 
-	while (1) {
-	}
+	LoopHandler();
 }
 
-static void __attribute__ ((naked)) LoopHandler (void)
+void __attribute__ ((naked,noreturn)) LoopHandler (void)
 {
 	__asm__ __volatile__(
 		"loop:\n"

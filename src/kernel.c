@@ -5,6 +5,7 @@
 #include "pl111.h"
 #include "sp804.h"
 #include "interrupt.h"
+#include "startup.h"
 
 int main (void)
 {
@@ -25,10 +26,6 @@ int main (void)
 	UG_PutString(200, 200, "hello form the other side\nthis is a new line hehehehehhehehehehehehe");
 
 	__asm__ __volatile__("svc 0x05");
-
-	/* We also loop if main() returns. */
-	for (;;)
-	    ;
 
 	return 0;
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "pl011.h"
+#include "startup.h"
 
 int _write (int f __unused, char *ptr, int len)
 {
@@ -45,13 +46,39 @@ void * _sbrk (ptrdiff_t size)
  * kill()/signal()/raise() are removed. _exit() just loops forever. */
 void __attribute__ ((noreturn)) abort (void)
 {
-#ifdef DEBUG
-  write (2, "Abort called\n", sizeof ("Abort called\n") - 1);
+  uint32_t addr;
+
+#ifdef __GNUC__
+  /* Store instruction causing undefined exception */
+  __asm__ __volatile__("sub %0, lr, #4" : "=r" (addr));
+#else
+  #error "Unsupported compiler."
 #endif
 
+  uart_puts("Abort called from instruction address 0x\n");
+  uart_print_hex(addr);
+  uart_puts(".\n");
+
+#if 0
   while (1)
   {
-      /* raise (SIGABRT); */
-      _exit (1);
+      raise(SIGABRT);
+      _exit(1);
   }
+#else
+  _exit(1);
+#endif
+}
+
+void __attribute__ ((noreturn)) _exit (int status __unused)
+{
+  LoopHandler();
+}
+
+void _init (void)
+{
+}
+
+void _fini (void)
+{
 }

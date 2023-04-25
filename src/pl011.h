@@ -38,4 +38,17 @@ static inline void uart_putc (char c)
 	UART0->DR = c;
 }
 
+void uart_puts (const char *s);
+void uart_print_number (unsigned int base, unsigned long x);
+
+static inline void uart_print_int (unsigned long x)
+{
+	uart_print_number (10U, x);
+}
+
+static inline void uart_print_hex (unsigned long x)
+{
+	uart_print_number (16U, x);
+}
+
 #endif

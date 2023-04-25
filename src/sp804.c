@@ -4,6 +4,7 @@
 #include "interrupt.h"
 #include "sp804.h"
 #include "pl031.h"
+#include "pl011.h"
 
 /* Flags for the timer control registers  */
 #define SP804_TIMER_ENABLE       (1U << 7)
@@ -38,7 +39,10 @@ static void timer_handler (void)
 	time_t ts = read_rtc();
 	struct tm *timeinfo = localtime(&ts);
 
-	printf("counter is: %lu, time: %s", counter++, asctime(timeinfo));
+	uart_puts("counter is: ");
+	uart_print_int(counter++);
+	uart_puts(", time: ");
+	uart_puts(asctime(timeinfo));
 
 	tregs->timers[0].IntClr = 0;
 }

@@ -12,6 +12,7 @@ if I have time I'm planning to clean up the code and seperate things like (Makef
 - Merge Cortex-A15 support?
 - Update to newest uGUI release.
 - Add more SMP support.
-- How can we merge together all failure routines that go into an endless loop?
+- All failure routines that go into an endless loop are merged together.
+- We could also use __dprintf() from newlib for debug output?
 
 tags: qemu cortex-a9 vexpress-a9 arm gic pl050 pl111 sp804 pl011 kmi clcd timer uart irq
