@@ -1,4 +1,6 @@
 #pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 
 /* -------------------------------------------------------------------------------- */
 /* -- µGUI - Generic GUI module (C)Achim Döbler, 2015                            -- */
