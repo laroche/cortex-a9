@@ -50,7 +50,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 #endif
 
 #if	CONFIG_ARM_NEON
-	/* initialize floating point unit (fpu) co10 and cp11 */
+	/* initialize floating point unit (fpu) cp10 and cp11 */
 	__asm__ __volatile__(
 		"mrc p15, 0, r0, c1, c1, 2\n"	/* set NSACR bits 11:10 for access to CP10 and CP11 */
 		"orr r0, r0, #0xc00\n"
@@ -81,8 +81,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 #endif
 
 	/* Set stack pointer for different modes.
-	 * Enable interrupts.
-	 * In user mode call main(). */
+	 * Enable interrupts. */
 	__asm__ __volatile__(
 		"cps #0x1b\n"
 		"ldr sp, =stackUND\n"
@@ -102,17 +101,23 @@ static void __attribute__ ((naked)) ResetHandler (void)
 		"cpsie if\n"
 
 		"cps #0x10\n"
-		"ldr sp, =stackUSR\n"
+		"ldr sp, =stackUSR\n");
 
-		"bl __libc_init_array\n"
+#if	CONFIG_INIT_ARRAY
+	__asm__ __volatile__("bl __libc_init_array");
+#endif
 
+	/* In user mode call main(). */
+	__asm__ __volatile__(
 		/* mov r0, #0 */
 		/* mov r1, #0 */
-		"bl main\n"
+		"bl main" : : "X" (&main));
 
-		"bl __libc_fini_array\n"
+#if	CONFIG_INIT_ARRAY
+	__asm__ __volatile__("bl __libc_fini_array");
+#endif
 
-		"b LoopHandler\n" : : "X" (&main));
+	__asm__ __volatile__("b LoopHandler");
 }
 
 static void __attribute__ ((interrupt("UNDEF"),noreturn)) UndefinedHandler (void)

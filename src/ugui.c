@@ -2,6 +2,10 @@
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 
+#include "cortex_config.h"
+
+#if CONFIG_GUI
+
 /* -------------------------------------------------------------------------------- */
 /* -- µGUI - Generic GUI module (C)Achim Döbler, 2015                            -- */
 /* -------------------------------------------------------------------------------- */
@@ -7018,4 +7022,4 @@ void _UG_ImageUpdate(UG_WINDOW* wnd, UG_OBJECT* obj)
    }
 }
 
-
+#endif

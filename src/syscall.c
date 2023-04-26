@@ -3,7 +3,9 @@
 #include <unistd.h>
 #include "pl011.h"
 #include "startup.h"
+#include "cortex_config.h"
 
+#if CONFIG_SMALL == 0
 int _write (int f __unused, char *ptr, int len)
 {
   int i;
@@ -74,7 +76,9 @@ void __attribute__ ((noreturn)) _exit (int status __unused)
 {
   LoopHandler();
 }
+#endif
 
+#if CONFIG_INIT_ARRAY
 void _init (void)
 {
 }
@@ -82,3 +86,4 @@ void _init (void)
 void _fini (void)
 {
 }
+#endif

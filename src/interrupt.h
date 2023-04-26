@@ -9,7 +9,7 @@ void interrupt_init(void);
 void install_isr(IRQn_Type irq_num, func_t handler);
 void enable_irq(IRQn_Type irq_num);
 
-void __attribute__ ((interrupt("IRQ"))) IRQHandler (void);
-void __attribute__ ((interrupt("FIQ"))) FIQHandler (void);
+void __attribute__ ((interrupt("IRQ"))) IRQHandler(void);
+void __attribute__ ((interrupt("FIQ"))) FIQHandler(void);
 
 #endif

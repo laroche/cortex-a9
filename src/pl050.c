@@ -1,6 +1,9 @@
 #include "pl011.h"
 #include "pl050.h"
 #include "interrupt.h"
+#include "cortex_config.h"
+
+#if CONFIG_GUI
 
 typedef volatile struct {
 	uint32_t cr;
@@ -42,3 +45,5 @@ void kb_init (void)
 	install_isr(KMI0_INTR_IRQn, kb_handler);
 	enable_irq(KMI0_INTR_IRQn);
 }
+
+#endif

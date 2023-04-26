@@ -5,6 +5,7 @@
 #include "sp804.h"
 #include "pl031.h"
 #include "pl011.h"
+#include "cortex_config.h"
 
 /* Flags for the timer control registers  */
 #define SP804_TIMER_ENABLE       (1U << 7)
@@ -36,13 +37,19 @@ static timer804_t * const tregs = (timer804_t *) TIMER_BASE;
 static void timer_handler (void)
 {
 	static uint32_t counter = 0U;
+#if	CONFIG_SMALL == 0
 	time_t ts = read_rtc();
 	struct tm *timeinfo = localtime(&ts);
+#endif
 
 	uart_puts("counter is: ");
-	uart_print_int(counter++);
+	uart_print_dec(counter++);
+#if	CONFIG_SMALL == 0
 	uart_puts(", time: ");
 	uart_puts(asctime(timeinfo));
+#else
+	uart_putc('\n');
+#endif
 
 	tregs->timers[0].IntClr = 0;
 }

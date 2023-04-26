@@ -21,7 +21,7 @@ void install_isr (IRQn_Type irq_num, func_t handler)
 	} else {
 #ifdef	DEBUG
 		uart_puts("Too big irq number ");
-		uart_print_int((unsigned long) irq_num);
+		uart_print_dec((unsigned long) irq_num);
 		uart_puts(".\n");
 #endif
 	}
@@ -71,7 +71,7 @@ void __attribute__ ((interrupt("IRQ"))) IRQHandler (void)
 		isr_table[irq_num]();
 	} else {
 		uart_puts("No handler found for irq ");
-		uart_print_int((unsigned long) irq_num);
+		uart_print_dec((unsigned long) irq_num);
 		uart_puts(".\n");
 	}
 

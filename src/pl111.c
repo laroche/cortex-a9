@@ -1,3 +1,6 @@
+#include "cortex_config.h"
+#if CONFIG_GUI
+
 #include "pl111.h"
 
 /* #define PL111_CR_EN		0x001U */
@@ -48,3 +51,4 @@ void clcd_init (void)
 
 	UG_Init (&gui, pdraw, 800, 600);
 }
+#endif

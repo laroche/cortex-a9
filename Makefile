@@ -31,9 +31,16 @@ CFLAGS += -DDEBUG
 # Floating Point:
 #CFLAGS += -mfpu=neon
 
+# Do we want to have GUI output? Also look at src/cortex_config.h:
+CONFIG_GUI=0
+
 QEMU = qemu-system-arm
+ifeq ($(CONFIG_GUI),1)
 QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors,unimp
+else
+QEMU_OPTS = -M vexpress-a9 -smp 4 -nographic -serial mon:stdio -d guest_errors,unimp
 # -d int
+endif
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS_ALL := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))
