@@ -32,7 +32,7 @@ CFLAGS += -DDEBUG
 #CFLAGS += -mfpu=neon
 
 # Do we want to have GUI output? Also look at src/cortex_config.h:
-CONFIG_GUI=0
+CONFIG_GUI=1
 
 QEMU = qemu-system-arm
 ifeq ($(CONFIG_GUI),1)

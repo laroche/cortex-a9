@@ -15,7 +15,7 @@
 
 #define CONFIG_ARM_ERRATA_775420 0
 
-#if 1
+#if 0
 #define CONFIG_GUI 0
 #define CONFIG_SMALL 1
 #define CONFIG_INIT_ARRAY 0
