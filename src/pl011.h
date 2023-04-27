@@ -39,7 +39,6 @@ static inline void uart_putc (char c)
 }
 
 void uart_puts(const char *s);
-void uart_print_dec(unsigned long x);
-void uart_print_hex(unsigned long x);
+void uart_printf(const char *fmt, ...);
 
 #endif

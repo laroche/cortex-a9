@@ -11,6 +11,7 @@ int _write (int f __unused, char *ptr, int len)
   int i;
 
   (void) f;
+
   for (i = 0; i < len; i++)
   {
     uart_putc(*ptr++);
@@ -57,9 +58,7 @@ void __attribute__ ((noreturn)) abort (void)
   #error "Unsupported compiler."
 #endif
 
-  uart_puts("Abort called from instruction address 0x\n");
-  uart_print_hex(addr);
-  uart_puts(".\n");
+  uart_printf("Abort called from instruction address 0x%x.\n", addr);
 
 #if 0
   while (1)
@@ -74,6 +73,8 @@ void __attribute__ ((noreturn)) abort (void)
 
 void __attribute__ ((noreturn)) _exit (int status __unused)
 {
+  (void) status;
+
   LoopHandler();
 }
 #endif

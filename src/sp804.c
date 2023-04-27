@@ -40,15 +40,10 @@ static void timer_handler (void)
 #if	CONFIG_SMALL == 0
 	time_t ts = read_rtc();
 	struct tm *timeinfo = localtime(&ts);
-#endif
 
-	uart_puts("counter is: ");
-	uart_print_dec(counter++);
-#if	CONFIG_SMALL == 0
-	uart_puts(", time: ");
-	uart_puts(asctime(timeinfo));
+	uart_printf("counter is: %u, time: %s", counter++, asctime(timeinfo));
 #else
-	uart_putc('\n');
+	uart_printf("counter is: %u\n", counter++);
 #endif
 
 	tregs->timers[0].IntClr = 0;
