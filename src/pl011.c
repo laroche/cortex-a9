@@ -17,8 +17,8 @@ static void uart_print_dec (unsigned long x)
 	p = buf + sizeof (buf);
 	*--p = '\0';
 	do {
-		*--p = chars[x % 10];
-		x /= 10;
+		*--p = chars[x % 10UL];
+		x /= 10UL;
 	} while (x != 0UL);
 	uart_puts(p);
 }
@@ -30,8 +30,8 @@ static void uart_print_hex (unsigned long x)
 	p = buf + sizeof (buf);
 	*--p = '\0';
 	do {
-		*--p = chars[x % 16];
-		x /= 16;
+		*--p = chars[x % 16UL];
+		x /= 16UL;
 	} while (x != 0UL);
 	uart_puts(p);
 }
@@ -58,12 +58,12 @@ void uart_printf(const char *fmt, ...)
 			uart_print_hex(l);
 			break;
 		case 's':
-			p = va_arg (args, const char *);
+			p = va_arg(args, const char *);
 			uart_puts(p);
 			break;
 		default:
 			break;
 		}
 	}
-	va_end (args);
+	va_end(args);
 }
