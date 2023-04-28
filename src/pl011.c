@@ -62,6 +62,11 @@ void uart_printf(const char *fmt, ...)
 			uart_puts(p);
 			break;
 		default:
+#ifdef			DEBUG
+			uart_puts("\nUnknown string format character: ");
+			uart_putc(fmt[-1]);
+			uart_putc('\n');
+#endif
 			break;
 		}
 	}
