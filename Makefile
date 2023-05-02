@@ -5,8 +5,9 @@ BINDIR = bin
 KERNEL = $(BINDIR)/kernel.elf
 MARCH=-march=armv7-a
 # Enable the following line to add floating point support:
-#MARCH=-march=armv7-a+vfpv3 -mfloat-abi=hard
-# As possible addition: -mtune=cortex-a9
+#MARCH=-march=armv7-a+vfpv3 -mfloat-abi=hard -Wno-attributes
+# As possible addition:
+#MARCH += -mtune=cortex-a9
 
 TOOLCHAIN ?= arm-none-eabi-
 CC = $(TOOLCHAIN)gcc
@@ -16,8 +17,8 @@ GDB = $(TOOLCHAIN)gdb
 
 OPTS     = --specs=nano.specs --specs=nosys.specs -nostartfiles
 CFLAGS   = $(MARCH) -O2 -Wall -Wextra -pedantic $(OPTS) -g
-CFLAGS += -Wundef -Wshadow -Wwrite-strings -Wold-style-definition -Wcast-align=strict -Wunreachable-code -Waggregate-return -Wlogical-op -Wtrampolines -Wc90-c99-compat -Wc99-c11-compat
-CFLAGS += -Wconversion -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wcast-qual -Wswitch-default
+#CFLAGS += -Wundef -Wshadow -Wwrite-strings -Wold-style-definition -Wcast-align=strict -Wunreachable-code -Waggregate-return -Wlogical-op -Wtrampolines -Wc90-c99-compat -Wc99-c11-compat
+#CFLAGS += -Wconversion -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wcast-qual -Wswitch-default
 CFLAGS  += -MMD -MP
 LFLAGS   = $(MARCH) -T $(SRCDIR)/linker.ld $(OPTS) -g
 

@@ -90,7 +90,7 @@ void /* __attribute__ ((noreturn)) */ qemu_exit (void)
         __asm__ __volatile__("movw r1, #0x0026");
         __asm__ __volatile__("movt r1, #0x2");          /* ADP_Stopped_ApplicationExit */
         __asm__ __volatile__("svc 0x00123456");
-        //__asm__ __volatile__("hlt #0xf000");
+        /* __asm__ __volatile__("hlt #0xf000"); */
 }
 #endif
 
