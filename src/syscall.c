@@ -73,9 +73,24 @@ void __attribute__ ((noreturn)) abort (void)
 
 void __attribute__ ((noreturn)) _exit (int status __unused)
 {
+#if CONFIG_QEMU_SEMIHOSTING
+  qemu_exit();
+#else
   (void) status;
 
   LoopHandler();
+#endif
+}
+#endif
+
+#if CONFIG_QEMU_SEMIHOSTING
+void /* __attribute__ ((noreturn)) */ qemu_exit (void)
+{
+        __asm__ __volatile__("mov r0, #0x18");          /* angel_SWIreason_ReportException */
+        __asm__ __volatile__("movw r1, #0x0026");
+        __asm__ __volatile__("movt r1, #0x2");          /* ADP_Stopped_ApplicationExit */
+        __asm__ __volatile__("svc 0x00123456");
+        //__asm__ __volatile__("hlt #0xf000");
 }
 #endif
 

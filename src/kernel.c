@@ -34,5 +34,13 @@ int main (void)
 
 	__asm__ __volatile__("svc 0x05");
 
+#if	CONFIG_QEMU_SEMIHOSTING
+	/* busy loop */
+	while (counter < 4U)
+		;
+
+	qemu_exit();
+#endif
+
 	return 0;
 }

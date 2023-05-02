@@ -39,6 +39,15 @@ static void uart_print_hex (unsigned long x)
 void uart_printf(const char *fmt, ...)
 {
 	va_list args;
+#if	0
+	char buf[1024];
+
+
+	va_start(args, fmt);
+	vsnprintf(buf, sizeof buf, fmt, args);
+	uart_puts (buf);
+	va_end(args);
+#else
 	unsigned int l;
 	const char *p;
 
@@ -71,4 +80,5 @@ void uart_printf(const char *fmt, ...)
 		}
 	}
 	va_end(args);
+#endif
 }

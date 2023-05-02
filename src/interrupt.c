@@ -30,7 +30,7 @@ void enable_irq (IRQn_Type irq_num)
 	GIC_EnableIRQ(irq_num);
 }
 
-#if CONFIG_ARM_NEON
+#if CONFIG_ARM_FP
 #define save_fpu() \
   __asm__ __volatile__( \
 	"vpush {d0-d15}\n" \

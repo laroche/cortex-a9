@@ -49,7 +49,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 		"blo stack_init_loop\n");
 #endif
 
-#if	CONFIG_ARM_NEON
+#if	CONFIG_ARM_FP
 	/* initialize floating point unit (fpu) cp10 and cp11 */
 	__asm__ __volatile__(
 		"mrc p15, 0, r0, c1, c1, 2\n"	/* set NSACR bits 11:10 for access to CP10 and CP11 */

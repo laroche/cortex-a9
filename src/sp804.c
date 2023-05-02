@@ -34,9 +34,10 @@ typedef volatile struct {
 
 static timer804_t * const tregs = (timer804_t *) TIMER_BASE;
 
+volatile uint32_t counter = 0U;
+
 static void timer_handler (void)
 {
-	static uint32_t counter = 0U;
 #if	CONFIG_SMALL == 0
 	time_t ts = read_rtc();
 	struct tm *timeinfo = localtime(&ts);

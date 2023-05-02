@@ -3,7 +3,10 @@ OBJDIR = obj
 BINDIR = bin
 
 KERNEL = $(BINDIR)/kernel.elf
-CORE = cortex-a9
+MARCH=-march=armv7-a
+# Enable the following line to add floating point support:
+#MARCH=-march=armv7-a+vfpv3 -mfloat-abi=hard
+# As possible addition: -mtune=cortex-a9
 
 TOOLCHAIN ?= arm-none-eabi-
 CC = $(TOOLCHAIN)gcc
@@ -12,11 +15,11 @@ OBJDUMP = $(TOOLCHAIN)objdump
 GDB = $(TOOLCHAIN)gdb
 
 OPTS     = --specs=nano.specs --specs=nosys.specs -nostartfiles
-CFLAGS   = -mcpu=$(CORE) -O2 -Wall -Wextra -pedantic $(OPTS) -g
-#CFLAGS += -Wundef -Wshadow -Wwrite-strings -Wold-style-definition -Wcast-align=strict -Wunreachable-code -Waggregate-return -Wlogical-op -Wtrampolines -Wc90-c99-compat -Wc99-c11-compat
-#CFLAGS += -Wconversion -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wcast-qual -Wswitch-default
+CFLAGS   = $(MARCH) -O2 -Wall -Wextra -pedantic $(OPTS) -g
+CFLAGS += -Wundef -Wshadow -Wwrite-strings -Wold-style-definition -Wcast-align=strict -Wunreachable-code -Waggregate-return -Wlogical-op -Wtrampolines -Wc90-c99-compat -Wc99-c11-compat
+CFLAGS += -Wconversion -Wmissing-prototypes -Wredundant-decls -Wnested-externs -Wcast-qual -Wswitch-default
 CFLAGS  += -MMD -MP
-LFLAGS   = -mcpu=$(CORE) -T $(SRCDIR)/linker.ld $(OPTS) -g
+LFLAGS   = $(MARCH) -T $(SRCDIR)/linker.ld $(OPTS) -g
 
 CFLAGS += -ffunction-sections -fdata-sections
 LFLAGS += -Wl,--gc-sections
@@ -28,9 +31,6 @@ LFLAGS += -Wl,--gc-sections
 
 CFLAGS += -DDEBUG
 
-# Floating Point:
-#CFLAGS += -mfpu=neon
-
 # Do we want to have GUI output? Also look at src/cortex_config.h:
 CONFIG_GUI=1
 
@@ -41,6 +41,7 @@ else
 QEMU_OPTS = -M vexpress-a9 -smp 4 -nographic -serial mon:stdio -d guest_errors,unimp
 # -d int
 endif
+#QEMU_OPTS += -semihosting
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS_ALL := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))

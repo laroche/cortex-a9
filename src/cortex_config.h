@@ -1,9 +1,8 @@
 #define CONFIG_SMP 1
-/* XXX #if __VFP_FP__ */
 #ifdef __ARM_FP
-#define CONFIG_ARM_NEON 1
+#define CONFIG_ARM_FP 1
 #else
-#define CONFIG_ARM_NEON 0
+#define CONFIG_ARM_FP 0
 #endif
 #define CONFIG_DEBUG 1
 
@@ -24,3 +23,5 @@
 #define CONFIG_SMALL 0
 #define CONFIG_INIT_ARRAY 1
 #endif
+
+#define CONFIG_QEMU_SEMIHOSTING 0
