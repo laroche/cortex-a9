@@ -36,13 +36,13 @@ CFLAGS += -DDEBUG
 CONFIG_GUI=1
 
 QEMU = qemu-system-arm
-ifeq ($(CONFIG_GUI),1)
-QEMU_OPTS = -M vexpress-a9 -smp 4 -serial mon:stdio -d guest_errors,unimp
-else
-QEMU_OPTS = -M vexpress-a9 -smp 4 -nographic -serial mon:stdio -d guest_errors,unimp
-# -d int
+QEMU_OPTS = -M vexpress-a9 -no-reboot -serial mon:stdio -d guest_errors,unimp
+ifeq ($(CONFIG_GUI),0)
+QEMU_OPTS += -nographic
 endif
-#QEMU_OPTS += -semihosting
+#QEMU_OPTS += -semihosting -semihosting-config enable=on,target=native
+#QEMU_OPTS += -smp 4
+#QEMU_OPTS += -d int
 
 C_FILES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS_ALL := $(addprefix $(OBJDIR)/,$(notdir $(C_FILES:.c=.o)))

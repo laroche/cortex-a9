@@ -86,11 +86,16 @@ void __attribute__ ((noreturn)) _exit (int status __unused)
 #if CONFIG_QEMU_SEMIHOSTING
 void /* __attribute__ ((noreturn)) */ qemu_exit (void)
 {
-        __asm__ __volatile__("mov r0, #0x18");          /* angel_SWIreason_ReportException */
-        __asm__ __volatile__("movw r1, #0x0026");
-        __asm__ __volatile__("movt r1, #0x2");          /* ADP_Stopped_ApplicationExit */
-        __asm__ __volatile__("svc 0x00123456");
-        /* __asm__ __volatile__("hlt #0xf000"); */
+	__asm__ __volatile__("mov r0, #0x18");		/* angel_SWIreason_ReportException */
+	/* __asm__ __volatile__("movw r1, #0x0026"); */
+	/* __asm__ __volatile__("movt r1, #0x2"); */	/* ADP_Stopped_ApplicationExit */
+	__asm__ __volatile__("ldr r1, =#0x20026");	/* ADP_Stopped_ApplicationExit */
+	__asm__ __volatile__("svc 0x00123456");		/* semihosting call on A32 */
+	/* __asm__ __volatile__("hlt #0xf000"); */
+#if	0
+	This line makes ARMv7M qemu resets:
+	SCB->AIRCR = (0x5FA << SCB_AIRCR_VECTKEY_Pos) | SCB_AIRCR_SYSRESETREQ_Msk;
+#endif
 }
 #endif
 
