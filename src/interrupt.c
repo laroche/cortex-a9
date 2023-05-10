@@ -14,7 +14,7 @@ void interrupt_init (void)
 
 static func_t isr_table[MAXIRQNUM];
 
-void install_isr (IRQn_Type irq_num, func_t handler)
+void install_isr (unsigned int irq_num, func_t handler)
 {
 	if (irq_num < MAXIRQNUM) {
 		isr_table[irq_num] = handler;
@@ -25,7 +25,7 @@ void install_isr (IRQn_Type irq_num, func_t handler)
 	}
 }
 
-void enable_irq (IRQn_Type irq_num)
+void enable_irq (unsigned int irq_num)
 {
 	GIC_EnableIRQ(irq_num);
 }
@@ -54,7 +54,7 @@ void enable_irq (IRQn_Type irq_num)
 #define restore_fpu() do {} while (0)
 #endif
 
-void __attribute__ ((interrupt("IRQ"))) IRQHandler (void)
+__attribute__ ((interrupt("IRQ"))) void IRQHandler (void)
 {
 	unsigned int irq_num;
 
@@ -76,7 +76,7 @@ void __attribute__ ((interrupt("IRQ"))) IRQHandler (void)
 	restore_fpu();
 }
 
-void __attribute__ ((interrupt("FIQ"))) FIQHandler (void)
+__attribute__ ((interrupt("FIQ"))) void FIQHandler (void)
 {
 	save_fpu();
 

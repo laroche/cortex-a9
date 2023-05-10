@@ -47,7 +47,7 @@ static void timer_handler (void)
 	uart_printf("counter is: %u\n", counter++);
 #endif
 
-	tregs->timers[0].IntClr = 0;
+	tregs->timers[0].IntClr = 0U;
 }
 
 void timer_init (void)

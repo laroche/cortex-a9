@@ -7,7 +7,7 @@
 /* First code to execute on startup (via first entry in VectorTable).
  * CPU boots into SVC/Supervisor Mode 0x13.
  */
-static void __attribute__ ((naked)) ResetHandler (void)
+static __attribute__ ((naked)) void ResetHandler (void)
 {
 #if	CONFIG_SMP
 	/* only cpu0 continues, all others loop */
@@ -105,6 +105,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 
 #if	CONFIG_INIT_ARRAY
 	__asm__ __volatile__("bl __libc_init_array");
+	/* XXX maybe also use: atexit(__libc_fini_array); */
 #endif
 
 	/* In user mode call main(). */
@@ -120,7 +121,7 @@ static void __attribute__ ((naked)) ResetHandler (void)
 	__asm__ __volatile__("b LoopHandler");
 }
 
-static void __attribute__ ((interrupt("UNDEF"),noreturn)) UndefinedHandler (void)
+static __attribute__ ((interrupt("UNDEF"),noreturn)) void UndefinedHandler (void)
 {
 	uint32_t UndefinedExceptionAddr;
 
@@ -135,7 +136,7 @@ static void __attribute__ ((interrupt("UNDEF"),noreturn)) UndefinedHandler (void
 	LoopHandler();
 }
 
-static void __attribute__ ((interrupt("SWI"))) SVCHandler (void)
+static __attribute__ ((interrupt("SWI"))) void SVCHandler (void)
 {
 #if     0
 	/* Record SVC number called and pointer to saved register on the stack. */
@@ -166,7 +167,7 @@ static void __attribute__ ((interrupt("SWI"))) SVCHandler (void)
 #define arm_errata_775420() do {} while (0)
 #endif
 
-static void __attribute__ ((interrupt("ABORT"),noreturn)) PrefetchAbortHandler (void)
+static __attribute__ ((interrupt("ABORT"),noreturn)) void PrefetchAbortHandler (void)
 {
 	uint32_t FaultStatus, PrefetchAbortAddr;
 
@@ -193,7 +194,7 @@ static void __attribute__ ((interrupt("ABORT"),noreturn)) PrefetchAbortHandler (
 	LoopHandler();
 }
 
-static void __attribute__ ((interrupt("ABORT"),noreturn)) DataAbortHandler (void)
+static __attribute__ ((interrupt("ABORT"),noreturn)) void DataAbortHandler (void)
 {
 	uint32_t FaultStatus, DataAbortAddr;
 
@@ -220,7 +221,7 @@ static void __attribute__ ((interrupt("ABORT"),noreturn)) DataAbortHandler (void
 	LoopHandler();
 }
 
-void __attribute__ ((naked,noreturn)) LoopHandler (void)
+__attribute__ ((naked,noreturn)) void LoopHandler (void)
 {
 	__asm__ __volatile__(
 		"loop:\n"
@@ -229,7 +230,7 @@ void __attribute__ ((naked,noreturn)) LoopHandler (void)
 	);
 }
 
-void __attribute__ ((section(".isr_vector"),naked,used)) VectorTable (void)
+__attribute__ ((section(".isr_vector"),naked,used)) void VectorTable (void)
 {
 	__asm__ __volatile__("b ResetHandler" : : "X" (&ResetHandler));
 	__asm__ __volatile__("b UndefinedHandler" : : "X" (&UndefinedHandler));

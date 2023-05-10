@@ -1,3 +1,6 @@
+#ifndef __CORTEX_CONFIG_H__
+#define __CORTEX_CONFIG_H__
+
 #define CONFIG_SMP 1
 #ifdef __ARM_FP
 #define CONFIG_ARM_FP 1
@@ -25,3 +28,5 @@
 #endif
 
 #define CONFIG_QEMU_SEMIHOSTING 0
+
+#endif

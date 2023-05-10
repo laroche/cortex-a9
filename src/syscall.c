@@ -47,7 +47,7 @@ void * _sbrk (ptrdiff_t size)
 
 /* We disable "raise()" to reduce overall size for embedded usage.
  * kill()/signal()/raise() are removed. _exit() just loops forever. */
-void __attribute__ ((noreturn)) abort (void)
+__attribute__ ((noreturn)) void abort (void)
 {
   uint32_t addr;
 
@@ -71,7 +71,7 @@ void __attribute__ ((noreturn)) abort (void)
 #endif
 }
 
-void __attribute__ ((noreturn)) _exit (int status __unused)
+__attribute__ ((noreturn)) void _exit (int status __unused)
 {
 #if CONFIG_QEMU_SEMIHOSTING
   qemu_exit();
@@ -84,7 +84,7 @@ void __attribute__ ((noreturn)) _exit (int status __unused)
 #endif
 
 #if CONFIG_QEMU_SEMIHOSTING
-void /* __attribute__ ((noreturn)) */ qemu_exit (void)
+/* __attribute__ ((noreturn)) */ void qemu_exit (void)
 {
 	__asm__ __volatile__("mov r0, #0x18");		/* angel_SWIreason_ReportException */
 	/* __asm__ __volatile__("movw r1, #0x0026"); */
