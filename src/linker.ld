@@ -36,6 +36,7 @@ SECTIONS {
         KEEP(*(.eh_frame*))
     } >RAM
 
+    . = ALIGN(4);
     .ARM.extab : {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
     } >RAM
