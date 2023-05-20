@@ -19,10 +19,8 @@ int _write (int f __unused, char *ptr, int len)
   return len;
 }
 
-/* Start of the heap.  */
-extern char _heap_start __attribute__((section(".heap")));
-/* End of the heap (maximum value of heap_ptr).  */
-extern char _heap_end __attribute__((section(".heap")));
+/* Start and end of the heap.  */
+extern char _heap_start, _heap_end;
 
 /* Extend heap space by size bytes.
    Return start of new space allocated, or -1 for errors

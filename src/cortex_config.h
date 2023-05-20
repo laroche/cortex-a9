@@ -29,4 +29,10 @@
 
 #define CONFIG_QEMU_SEMIHOSTING 0
 
+#ifndef __clang__
+#define __no_stackprot __attribute__ ((__optimize__ ("-fno-stack-protector")))
+#else
+#define __no_stackprot
+#endif
+
 #endif

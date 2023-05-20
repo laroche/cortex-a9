@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include "pl011.h"
+#include "cortex_config.h"
 
 void uart_puts (const char *s)
 {
@@ -36,7 +37,7 @@ static void uart_print_hex (unsigned long x)
 	uart_puts(p);
 }
 
-void uart_printf(const char *fmt, ...)
+__no_stackprot void uart_printf(const char *fmt, ...)
 {
 	va_list args;
 #if	0

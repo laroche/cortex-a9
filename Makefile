@@ -1,3 +1,8 @@
+# Build a release or a debug version:
+RELEASE = 0
+# Do we want to have GUI output? Also look at src/cortex_config.h:
+CONFIG_GUI = 1
+
 SRCDIR = src
 OBJDIR = obj
 BINDIR = bin
@@ -30,10 +35,13 @@ LFLAGS += -Wl,--gc-sections
 #CFLAGS += -flto
 #LFLAGS += -flto
 
+ifeq ($(RELEASE),0)
 CFLAGS += -DDEBUG
-
-# Do we want to have GUI output? Also look at src/cortex_config.h:
-CONFIG_GUI=1
+CFLAGS += -fstack-protector-strong
+#CFLAGS += -fstack-protector-all
+CFLAGS += -fstack-check
+CFLAGS += -D_FORTIFY_SOURCE=2
+endif
 
 QEMU = qemu-system-arm
 QEMU_OPTS = -M vexpress-a9 -no-reboot -serial mon:stdio -d guest_errors,unimp

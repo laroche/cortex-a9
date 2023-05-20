@@ -24,7 +24,7 @@ typedef volatile struct {
 
 #define UART0_BASE 0x10009000U
 
-static inline __attribute__((always_inline)) void uart_putc (char c)
+static inline __attribute__ ((always_inline)) void uart_putc (char c)
 {
 	pl011_t * const UART0 = (pl011_t *) UART0_BASE;
 
