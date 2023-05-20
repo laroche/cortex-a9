@@ -34,6 +34,7 @@
    POSSIBILITY OF SUCH DAMAGE.
    ---------------------------------------------------------------------------*/
 
+#include <sys/cdefs.h>
 #include "gic.h"
 
 /* Globals for use of post-scatterloading code that must access GIC */
@@ -146,7 +147,7 @@ void GIC_SetBinaryPoint(uint32_t binary_point)
     GICInterface->ICCBPR = binary_point & 0x07; /* set binary point */
 }
 
-uint32_t GIC_GetBinaryPoint(uint32_t binary_point __attribute__ ((unused)))
+uint32_t GIC_GetBinaryPoint(uint32_t binary_point __unused)
 {
     return (uint32_t)GICInterface->ICCBPR;
 }

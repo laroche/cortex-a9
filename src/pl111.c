@@ -1,6 +1,7 @@
 #include "cortex_config.h"
 #if CONFIG_GUI
 
+#include <sys/cdefs.h>
 #include "pl111.h"
 
 /* #define PL111_CR_EN		0x001U */
@@ -22,7 +23,7 @@ typedef volatile struct {
 static UG_GUI gui;
 static uint32_t * const fb = (uint32_t *) 0x60110000U;
 
-static inline __attribute__((always_inline)) void draw_pixel (uint32_t x, uint32_t y, uint32_t c)
+static __always_inline void draw_pixel (uint32_t x, uint32_t y, uint32_t c)
 {
 	fb[(y * 800) + x] = c;
 }

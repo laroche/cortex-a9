@@ -1,3 +1,4 @@
+#include <sys/cdefs.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -45,7 +46,7 @@ void * _sbrk (ptrdiff_t size)
 
 /* We disable "raise()" to reduce overall size for embedded usage.
  * kill()/signal()/raise() are removed. _exit() just loops forever. */
-__attribute__ ((noreturn)) void abort (void)
+__dead2 void abort (void)
 {
   uint32_t addr;
 
@@ -69,7 +70,7 @@ __attribute__ ((noreturn)) void abort (void)
 #endif
 }
 
-__attribute__ ((noreturn)) void _exit (int status __unused)
+__dead2 void _exit (int status __unused)
 {
 #if CONFIG_QEMU_SEMIHOSTING
   qemu_exit();
@@ -82,7 +83,7 @@ __attribute__ ((noreturn)) void _exit (int status __unused)
 #endif
 
 #if CONFIG_QEMU_SEMIHOSTING
-/* __attribute__ ((noreturn)) */ void qemu_exit (void)
+/* __dead2 */ void qemu_exit (void)
 {
 	__asm__ __volatile__("mov r0, #0x18");		/* angel_SWIreason_ReportException */
 	/* __asm__ __volatile__("movw r1, #0x0026"); */
