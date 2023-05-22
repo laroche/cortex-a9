@@ -230,7 +230,7 @@ __attribute__ ((naked,noreturn)) void LoopHandler (void)
 	);
 }
 
-__attribute__ ((section(".isr_vector"),naked,used)) void VectorTable (void)
+__no_stackprot __attribute__ ((section(".isr_vector"),naked,used)) void VectorTable (void)
 {
 	__asm__ __volatile__("b ResetHandler" : : "X" (&ResetHandler));
 	__asm__ __volatile__("b UndefinedHandler" : : "X" (&UndefinedHandler));
