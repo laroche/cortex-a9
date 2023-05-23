@@ -37,7 +37,7 @@ static void uart_print_hex (unsigned long x)
 	uart_puts(p);
 }
 
-__no_stackprot void uart_printf(const char *fmt, ...)
+__no_stackprot void uart_printf (const char *fmt, ...)
 {
 	va_list args;
 #if	0
