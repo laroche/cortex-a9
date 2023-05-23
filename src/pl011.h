@@ -3,6 +3,7 @@
 
 #include <sys/cdefs.h>
 #include <stdint.h>
+#include "cortex_config.h"
 
 typedef volatile struct {
 	uint32_t DR;
