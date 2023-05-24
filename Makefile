@@ -39,7 +39,6 @@ ifeq ($(RELEASE),0)
 CFLAGS += -DDEBUG
 CFLAGS += -fstack-protector-strong
 #CFLAGS += -fstack-protector-all
-CFLAGS += -fstack-check
 CFLAGS += -D_FORTIFY_SOURCE=2
 endif
 
