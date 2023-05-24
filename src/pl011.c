@@ -74,7 +74,9 @@ __no_stackprot void uart_printf (const char *fmt, ...)
 		default:
 #ifdef			DEBUG
 			uart_puts("\nUnknown string format character: ");
-			uart_putc(fmt[-1]);
+			if (fmt[-1] != '\0') {
+				uart_putc(fmt[-1]);
+			}
 			uart_putc('\n');
 #endif
 			break;
