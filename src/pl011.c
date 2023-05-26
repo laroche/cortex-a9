@@ -49,9 +49,6 @@ __no_stackprot void uart_printf (const char *fmt, ...)
 	uart_puts (buf);
 	va_end(args);
 #else
-	unsigned int l;
-	const char *p;
-
 	va_start(args, fmt);
 	while (*fmt) {
 		if (*fmt != '%' || *++fmt == '%') {
@@ -60,16 +57,13 @@ __no_stackprot void uart_printf (const char *fmt, ...)
 		}
 		switch (*fmt++) {
 		case 'u':
-			l = va_arg(args, unsigned int);
-			uart_print_dec(l);
+			uart_print_dec(va_arg(args, unsigned int));
 			break;
 		case 'x':
-			l = va_arg(args, unsigned int);
-			uart_print_hex(l);
+			uart_print_hex(va_arg(args, unsigned int));
 			break;
 		case 's':
-			p = va_arg(args, const char *);
-			uart_puts(p);
+			uart_puts(va_arg(args, const char *));
 			break;
 		default:
 #ifdef			DEBUG
