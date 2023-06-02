@@ -57,7 +57,7 @@ __dead2 void abort (void)
   #error "Unsupported compiler."
 #endif
 
-  uart_printf("Abort called from instruction address 0x%x.\n", addr);
+  uart_printf("Abort called from instruction address 0x%lx.\n", addr);
 
 #if 0
   while (1)
