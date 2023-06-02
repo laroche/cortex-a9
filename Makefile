@@ -20,6 +20,9 @@ SIZE = $(TOOLCHAIN)size
 OBJDUMP = $(TOOLCHAIN)objdump
 GDB = $(TOOLCHAIN)gdb
 
+# Do we want to run sparse source code checker?
+SPARSE = 0
+
 OPTS     = --specs=nano.specs --specs=nosys.specs -nostartfiles
 CFLAGS   = $(MARCH) -O2 -Wall -Wextra -pedantic $(OPTS) -g
 #CFLAGS += -Wundef -Wshadow -Wwrite-strings -Wold-style-definition -Wcast-align=strict -Wunreachable-code -Waggregate-return -Wlogical-op -Wtrampolines -Wc90-c99-compat -Wc99-c11-compat
@@ -85,6 +88,9 @@ $(OBJDIR):
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
+ifeq ($(SPARSE),1)
+	sparse $(CFLAGS) -D__SPARSE__ -c $< -o $@
+endif
 
 .PHONY: all qemu dqemu run gdb clean
 

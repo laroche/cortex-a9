@@ -12,7 +12,15 @@ if I have time I'm planning to clean up the code and seperate things like (Makef
 - Merge Cortex-A15 support?
 - Update to newest uGUI release.
 - Add more SMP support.
+   - Check: <https://github.com/s-matyukevich/raspberry-pi-os/issues/8>
+- Check out: <https://github.com/ESLab/FreeRTOS---ARM-Cortex-A9-VersatileExpress-Quad-Core-port>
+- Check out: <https://github.com/mytchel/agatha/blob/master/arm/kern/vectors.S>
 - All failure routines that go into an endless loop are merged together.
 - We could also use __dprintf() from newlib for debug output?
+- If sparse checking is enabled, it runs with normal system headers instead of using
+  newlib header files.
+- For embedded, you should check all invocations for _exit, abort, assert.
+  Are kill/signal/raise indeed missing?
+  Check/monitor all calls to malloc/free?
 
 tags: qemu cortex-a9 vexpress-a9 arm gic pl050 pl111 sp804 pl011 kmi clcd timer uart irq
