@@ -17,14 +17,12 @@
 
 #define CONFIG_ARM_ERRATA_775420 0
 
-#if 0
-#define CONFIG_GUI 0
-#define CONFIG_SMALL 1
-#define CONFIG_INIT_ARRAY 0
-#else
-#define CONFIG_GUI 1
+#if CONFIG_GUI
 #define CONFIG_SMALL 0
 #define CONFIG_INIT_ARRAY 1
+#else
+#define CONFIG_SMALL 1
+#define CONFIG_INIT_ARRAY 0
 #endif
 
 #define CONFIG_QEMU_SEMIHOSTING 0

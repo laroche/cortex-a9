@@ -1,6 +1,6 @@
 # Build a release or a debug version:
 RELEASE = 0
-# Do we want to have GUI output? Also look at src/cortex_config.h:
+# Do we want to have GUI output?
 CONFIG_GUI = 1
 
 SRCDIR = src
@@ -43,6 +43,12 @@ CFLAGS += -DDEBUG
 CFLAGS += -fstack-protector-strong
 #CFLAGS += -fstack-protector-all
 CFLAGS += -D_FORTIFY_SOURCE=2
+endif
+
+ifeq ($(CONFIG_GUI),0)
+CFLAGS += -DCONFIG_GUI=0
+else
+CFLAGS += -DCONFIG_GUI=1
 endif
 
 QEMU = qemu-system-arm
