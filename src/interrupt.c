@@ -20,7 +20,7 @@ void install_isr (unsigned int irq_num, func_t handler)
 		isr_table[irq_num] = handler;
 	} else {
 #ifdef	DEBUG
-		uart_printf("Too big irq number %u.\n", (unsigned int) irq_num);
+		uart_printf("Too big irq number %u.\n", irq_num);
 #endif
 	}
 }
