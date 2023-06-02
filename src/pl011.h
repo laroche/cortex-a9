@@ -36,6 +36,6 @@ static __always_inline void uart_putc (char c)
 }
 
 void uart_puts(const char *s);
-__no_stackprot void uart_printf(const char *fmt, ...);
+__no_stackprot __attribute__ ((format(printf, 1, 2))) void uart_printf(const char *fmt, ...);
 
 #endif

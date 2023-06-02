@@ -42,9 +42,9 @@ static void timer_handler (void)
 	time_t ts = read_rtc();
 	struct tm *timeinfo = localtime(&ts);
 
-	uart_printf("counter is: %u, time: %s", counter++, asctime(timeinfo));
+	uart_printf("counter is: %lu, time: %s", counter++, asctime(timeinfo));
 #else
-	uart_printf("counter is: %u\n", counter++);
+	uart_printf("counter is: %lu\n", counter++);
 #endif
 
 	tregs->timers[0].IntClr = 0U;

@@ -131,7 +131,7 @@ static __attribute__ ((interrupt("UNDEF"),noreturn)) void UndefinedHandler (void
 #else
 	#error "Unsupported compiler."
 #endif
-	uart_printf("Undefined instruction at address 0x%x.\n", UndefinedExceptionAddr);
+	uart_printf("Undefined instruction at address 0x%lx.\n", UndefinedExceptionAddr);
 
 	LoopHandler();
 }
@@ -181,7 +181,7 @@ static __attribute__ ((interrupt("ABORT"),noreturn)) void PrefetchAbortHandler (
 	volatile register uint32_t Reg __asm(XREG_CP15_INST_FAULT_STATUS);
 	FaultStatus = Reg;
 #endif
-	uart_printf("Prefetch abort with Instruction Fault Status Register 0x%x.\n", FaultStatus);
+	uart_printf("Prefetch abort with Instruction Fault Status Register 0x%lx.\n", FaultStatus);
 
 #ifdef __GNUC__
 	/* Store instruction causing prefetch abort */
@@ -189,7 +189,7 @@ static __attribute__ ((interrupt("ABORT"),noreturn)) void PrefetchAbortHandler (
 #else
 	#error "Unsupported compiler."
 #endif
-	uart_printf("Prefetch abort at instruction address 0x%x.\n", PrefetchAbortAddr);
+	uart_printf("Prefetch abort at instruction address 0x%lx.\n", PrefetchAbortAddr);
 
 	LoopHandler();
 }
@@ -208,7 +208,7 @@ static __attribute__ ((interrupt("ABORT"),noreturn)) void DataAbortHandler (void
 	volatile register uint32_t Reg __asm(XREG_CP15_DATA_FAULT_STATUS);
 	FaultStatus = Reg;
 #endif
-	uart_printf("Data abort with Data Fault Status Register 0x%x.\n", FaultStatus);
+	uart_printf("Data abort with Data Fault Status Register 0x%lx.\n", FaultStatus);
 
 #ifdef __GNUC__
 	/* Store instruction causing data abort */
@@ -216,7 +216,7 @@ static __attribute__ ((interrupt("ABORT"),noreturn)) void DataAbortHandler (void
 #else
 	#error "Unsupported compiler."
 #endif
-	uart_printf("Data abort at instruction address 0x%x.\n", DataAbortAddr);
+	uart_printf("Data abort at instruction address 0x%lx.\n", DataAbortAddr);
 
 	LoopHandler();
 }

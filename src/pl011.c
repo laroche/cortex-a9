@@ -37,7 +37,7 @@ static void uart_print_hex (unsigned long x)
 	uart_puts(p);
 }
 
-__no_stackprot void uart_printf (const char *fmt, ...)
+__no_stackprot __attribute__ ((format(printf, 1, 2))) void uart_printf (const char *fmt, ...)
 {
 	va_list args;
 #if	0
@@ -56,6 +56,24 @@ __no_stackprot void uart_printf (const char *fmt, ...)
 			continue;
 		}
 		switch (*fmt++) {
+		case 'l':
+			switch (*fmt++) {
+			case 'u':
+				uart_print_dec(va_arg(args, unsigned long));
+				break;
+			case 'x':
+				uart_print_hex(va_arg(args, unsigned long));
+				break;
+			default:
+#ifdef				DEBUG
+				uart_puts("\nUnknown string format character (after l modifier): ");
+				if (fmt[-1] != '\0') {
+					uart_putc(fmt[-1]);
+				}
+				uart_putc('\n');
+#endif
+			}
+			break;
 		case 'u':
 			uart_print_dec(va_arg(args, unsigned int));
 			break;
