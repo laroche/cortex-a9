@@ -72,6 +72,7 @@ __no_stackprot __attribute__ ((format(printf, 1, 2))) void uart_printf (const ch
 				}
 				uart_putc('\n');
 #endif
+				break;
 			}
 			break;
 		case 'u':
