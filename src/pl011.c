@@ -11,7 +11,7 @@ void uart_puts (const char *s)
 
 static char chars[16] = "0123456789abcdef";
 
-static void uart_print_dec (unsigned long x)
+static __no_stackprot void uart_print_dec (unsigned long x)
 {
 	char *p, buf[32];
 
@@ -24,7 +24,7 @@ static void uart_print_dec (unsigned long x)
 	uart_puts(p);
 }
 
-static void uart_print_hex (unsigned long x)
+static __no_stackprot void uart_print_hex (unsigned long x)
 {
 	char *p, buf[32];
 
