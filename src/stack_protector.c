@@ -1,7 +1,7 @@
 #include <sys/cdefs.h>
 #include <stdint.h>
-#include <string.h>
 #include <unistd.h>
+#include "pl011.h"
 
 uintptr_t __stack_chk_guard = 0x00000aff; /* 0, 0, '\n', 255 */
 
@@ -11,8 +11,7 @@ uintptr_t __stack_chk_guard = 0x00000aff; /* 0, 0, '\n', 255 */
 
 __dead2 void __stack_chk_fail (void)
 {
-  const char msg[] = "*** stack smashing detected ***: terminated\n";
-  write(2, msg, strlen(msg));
+  uart_printf("*** stack smashing detected ***: terminated\n");
   _exit(127);
 }
 
