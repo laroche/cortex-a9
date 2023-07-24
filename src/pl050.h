@@ -1,5 +1,5 @@
-#ifndef __PL050_H__
-#define __PL050_H__
+#ifndef PL050_H
+#define PL050_H
 
 void kb_init(void);
 

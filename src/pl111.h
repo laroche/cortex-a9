@@ -1,5 +1,5 @@
-#ifndef __PL111_H__
-#define __PL111_H__
+#ifndef PL111_H
+#define PL111_H
 
 #include "ugui.h"
 

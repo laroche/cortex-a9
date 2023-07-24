@@ -32,7 +32,7 @@ typedef volatile struct {
 
 #define TIMER_BASE 0x10011000U
 
-static timer804_t * const tregs = (timer804_t *) TIMER_BASE;
+static timer804_t * const tregs = (timer804_t * const) TIMER_BASE;
 
 volatile uint32_t counter = 0U;
 

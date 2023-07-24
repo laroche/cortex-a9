@@ -1,5 +1,5 @@
-#ifndef __CORTEX_CONFIG_H__
-#define __CORTEX_CONFIG_H__
+#ifndef CORTEX_CONFIG_H
+#define CORTEX_CONFIG_H
 
 #define CONFIG_SMP 1
 #ifdef __ARM_FP

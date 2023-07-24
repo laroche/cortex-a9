@@ -1,5 +1,5 @@
-#ifndef __SP804_H__
-#define __SP804_H__
+#ifndef SP804_H
+#define SP804_H
 
 extern volatile uint32_t counter;
 

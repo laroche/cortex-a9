@@ -65,7 +65,7 @@ __attribute__ ((interrupt("IRQ"))) void IRQHandler (void)
 	irq_num = GIC_AcknowledgePending();
 	GIC_ClearPendingIRQ(irq_num);
 
-	if (irq_num < MAXIRQNUM && isr_table[irq_num] != NULL) {
+	if ((irq_num < MAXIRQNUM) && (isr_table[irq_num] != NULL)) {
 		isr_table[irq_num]();
 	} else {
 		uart_printf("No handler found for irq %u.\n", irq_num);

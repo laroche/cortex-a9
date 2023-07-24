@@ -21,7 +21,7 @@ typedef volatile struct {
 } PL111MMIO;
 
 static UG_GUI gui;
-static uint32_t * const fb = (uint32_t *) 0x60110000U;
+static uint32_t * const fb = (uint32_t * const) 0x60110000U;
 
 static __always_inline void draw_pixel (uint32_t x, uint32_t y, uint32_t c)
 {
@@ -35,7 +35,7 @@ void pdraw (UG_S16 x, UG_S16 y, UG_COLOR c)
 
 void clcd_init (void)
 {
-	PL111MMIO * const plio = (PL111MMIO *) PL111_IOBASE;
+	PL111MMIO * const plio = (PL111MMIO * const) PL111_IOBASE;
 	int x;
 
 	/* 640x480 pixels */

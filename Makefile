@@ -77,6 +77,7 @@ endif
 endif
 endif
 
+.PHONY: all qemu dqemu run gdb clean
 all: $(KERNEL)
 
 $(KERNEL): $(OBJECTS_ALL) $(SRCDIR)/linker.ld | $(OBJDIR)
@@ -97,8 +98,6 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.c
 ifeq ($(SPARSE),1)
 	sparse $(CFLAGS) -D__SPARSE__ -c $< -o $@
 endif
-
-.PHONY: all qemu dqemu run gdb clean
 
 qemu: $(KERNEL)
 	QEMU_AUDIO_DRV=none $(QEMU) $(QEMU_OPTS) -kernel $(KERNEL)

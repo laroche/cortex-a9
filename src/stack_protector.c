@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "pl011.h"
 
-uintptr_t __stack_chk_guard = 0x00000aff; /* 0, 0, '\n', 255 */
+uintptr_t __stack_chk_guard = 0x00000affU; /* 0, 0, '\n', 255 */
 
 #ifdef __SPARSE__
 #define __dead2 __attribute__ ((noreturn))

@@ -15,7 +15,7 @@ typedef volatile struct {
 
 #define KMI_KB_BASE 0x10006000U
 
-static kmi_t * const kmi_kb = (kmi_t *) KMI_KB_BASE;
+static kmi_t * const kmi_kb = (kmi_t * const) KMI_KB_BASE;
 
 static char kbdus[128] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, /* 0x00 - 0x0f */

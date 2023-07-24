@@ -1,5 +1,5 @@
-#ifndef __PL031_H__
-#define __PL031_H__
+#ifndef PL031_H
+#define PL031_H
 
 #include <sys/cdefs.h>
 #include <stdint.h>
@@ -19,7 +19,7 @@ typedef volatile struct {
 
 static __always_inline uint32_t read_rtc (void)
 {
-	pl031_t * const RTC = (pl031_t *) RTC_BASE;
+	pl031_t * const RTC = (pl031_t * const) RTC_BASE;
 
 	return RTC->RTCDR;
 }

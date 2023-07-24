@@ -51,7 +51,7 @@ __no_stackprot __attribute__ ((format(printf, 1, 2))) void uart_printf (const ch
 #else
 	va_start(args, fmt);
 	while (*fmt) {
-		if (*fmt != '%' || *++fmt == '%') {
+		if ((*fmt != '%') || (*++fmt == '%')) {
 			uart_putc(*fmt++);
 			continue;
 		}

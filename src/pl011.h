@@ -1,5 +1,5 @@
-#ifndef __PL011_H__
-#define __PL011_H__
+#ifndef PL011_H
+#define PL011_H
 
 #include <sys/cdefs.h>
 #include <stdint.h>
@@ -28,7 +28,7 @@ typedef volatile struct {
 
 static __always_inline void uart_putc (char c)
 {
-	pl011_t * const UART0 = (pl011_t *) UART0_BASE;
+	pl011_t * const UART0 = (pl011_t * const) UART0_BASE;
 
 	while (UART0->FR & 0x20U)
 		;

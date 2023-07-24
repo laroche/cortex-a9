@@ -1,5 +1,5 @@
-#ifndef __INTERRUPT_H__
-#define __INTERRUPT_H__
+#ifndef INTERRUPT_H
+#define INTERRUPT_H
 
 #include "gic.h"
 
