@@ -29,6 +29,7 @@ make run
 - Network driver support?
 - Add FreeRTOS support.
 - Update to newest uGUI release.
+- Also support clang as compiler.
 - Add more SMP support.
    - Check: <https://github.com/s-matyukevich/raspberry-pi-os/issues/8>
 - Check out: <https://github.com/ESLab/FreeRTOS---ARM-Cortex-A9-VersatileExpress-Quad-Core-port>
